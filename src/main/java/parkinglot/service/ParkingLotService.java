@@ -18,4 +18,8 @@ public class ParkingLotService {
     public boolean isCarPresent(String carNumber) {
         return parkedCars.containsKey(carNumber);
     }
+
+    public void unParkTheCar(String carNumber) {
+        parkedCars.remove(carNumber);
+    }
 }
