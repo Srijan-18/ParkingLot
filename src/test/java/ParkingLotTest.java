@@ -3,6 +3,8 @@ import org.junit.Before;
 import org.junit.Test;
 import parkinglot.exception.ParkingLotServiceException;
 import parkinglot.service.AirportSecurity;
+import parkinglot.service.IAuthority;
+import parkinglot.service.Owner;
 import parkinglot.service.ParkingLotService;
 
 public class ParkingLotTest {
@@ -32,14 +34,15 @@ public class ParkingLotTest {
     }
 
     @Test
-    public void givenParkingLotWithItsSize_WhenFullyOccupied_ShoulReturnTrue() {
+    public void givenParkingLot_WhenFullAndQueriedForParkingAvailabilityByOwner_ShouldReturnFalse() {
         int size = 3;
         parkingLotService.setParkingLotSize(size);
         String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
         parkingLotService.parkTheCar(carNumber[0]);
         parkingLotService.parkTheCar(carNumber[1]);
         parkingLotService.parkTheCar(carNumber[2]);
-        boolean status = parkingLotService.checkParkingLotStatus();
+        IAuthority owner = new Owner();
+        boolean status = owner.parkingSpaceAvailability(parkingLotService);
         Assert.assertTrue(status);
     }
 
@@ -76,7 +79,7 @@ public class ParkingLotTest {
         String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234", "UP31 AS7894"};
         for (String car:carNumber)
             parkingLotService.parkTheCar(car);
-        AirportSecurity airportSecurity = new AirportSecurity();
+        IAuthority airportSecurity = new AirportSecurity();
         boolean status = airportSecurity.parkingSpaceAvailability(parkingLotService);
         Assert.assertFalse(status);
     }
