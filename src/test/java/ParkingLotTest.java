@@ -2,6 +2,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import parkinglot.exception.ParkingLotServiceException;
+import parkinglot.service.AirportSecurity;
 import parkinglot.service.ParkingLotService;
 
 public class ParkingLotTest {
@@ -66,5 +67,17 @@ public class ParkingLotTest {
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.CAR_NOT_PRESENT, exception.exceptionType);
         }
+    }
+
+    @Test
+    public void givenParkingLot_WhenFullAndQueriedForParkingAvailabilityByAirportSecurity_ShouldReturnFalse() {
+        int size = 4;
+        parkingLotService.setParkingLotSize(size);
+        String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234", "UP31 AS7894"};
+        for (String car:carNumber)
+            parkingLotService.parkTheCar(car);
+        AirportSecurity airportSecurity = new AirportSecurity();
+        boolean status = airportSecurity.parkingSpaceAvailability(parkingLotService);
+        Assert.assertFalse(status);
     }
 }
