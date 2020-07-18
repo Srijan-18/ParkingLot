@@ -28,4 +28,16 @@ public class ParkingLotTest {
         boolean status = parkingLotService.isCarPresent(carNumber1);
         Assert.assertFalse(status);
     }
+
+    @Test
+    public void givenParkingLotWithItsSize_WhenFullyOccupied_ShoulReturnTrue() {
+        int size = 3;
+        parkingLotService.setParkingLotSize(size);
+        String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
+        parkingLotService.parkTheCar(carNumber[0]);
+        parkingLotService.parkTheCar(carNumber[1]);
+        parkingLotService.parkTheCar(carNumber[2]);
+        boolean status = parkingLotService.checkParkingLotStatus();
+        Assert.assertTrue(status);
+    }
 }
