@@ -30,7 +30,7 @@ public class ParkingLotService {
     }
 
     public void unParkTheCar(String carNumber) {
-        if(!isCarPresent(carNumber))
+        if(!this.isCarPresent(carNumber))
             throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.CAR_NOT_PRESENT,
                                                  carNumber + " IS NOT PRESENT IN PARKING LOT.");
         parkedCars.remove(carNumber);
