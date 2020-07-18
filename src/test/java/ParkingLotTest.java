@@ -38,9 +38,8 @@ public class ParkingLotTest {
         int size = 3;
         parkingLotService.setParkingLotSize(size);
         String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
-        parkingLotService.parkTheCar(carNumber[0]);
-        parkingLotService.parkTheCar(carNumber[1]);
-        parkingLotService.parkTheCar(carNumber[2]);
+        for (String car:carNumber)
+            parkingLotService.parkTheCar(car);
         IAuthority owner = new Owner();
         boolean status = owner.parkingSpaceAvailability(parkingLotService);
         Assert.assertTrue(status);
@@ -52,10 +51,8 @@ public class ParkingLotTest {
             int size = 3;
             parkingLotService.setParkingLotSize(size);
             String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234", "UP31 AS7894"};
-            parkingLotService.parkTheCar(carNumber[0]);
-            parkingLotService.parkTheCar(carNumber[1]);
-            parkingLotService.parkTheCar(carNumber[2]);
-            parkingLotService.parkTheCar(carNumber[3]);
+            for (String car:carNumber)
+                parkingLotService.parkTheCar(car);
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.PARKING_FULL, exception.exceptionType);
         }
