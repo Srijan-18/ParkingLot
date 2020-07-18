@@ -20,7 +20,7 @@ public class ParkingLotService {
         if(isParkingLotFull)
             throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.PARKING_FULL,
                                                  "NO MORE SPACE TO PARK " + carNumber );
-        parkedCars.put(carNumber, carNumber);
+        parkedCars.put(carNumber, "NON-MEMBER");
         if(parkedCars.size() == parkingLotSize)
             isParkingLotFull = true;
     }
