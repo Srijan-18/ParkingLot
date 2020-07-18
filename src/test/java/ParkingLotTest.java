@@ -1,12 +1,13 @@
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import parkinglot.exception.ParkingLotServiceException;
 import parkinglot.service.ParkingLotService;
 
 public class ParkingLotTest {
     private ParkingLotService parkingLotService;
     @Before
-    public void setUp() throws Exception {
+    public void setUp()  {
         parkingLotService = new ParkingLotService();
     }
 
@@ -39,5 +40,31 @@ public class ParkingLotTest {
         parkingLotService.parkTheCar(carNumber[2]);
         boolean status = parkingLotService.checkParkingLotStatus();
         Assert.assertTrue(status);
+    }
+
+    @Test
+    public void givenCarsToPark_WhenAskedToParkBeyondSize_ShouldThrowAnException() {
+        try {
+            int size = 3;
+            parkingLotService.setParkingLotSize(size);
+            String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234", "UP31 AS7894"};
+            parkingLotService.parkTheCar(carNumber[0]);
+            parkingLotService.parkTheCar(carNumber[1]);
+            parkingLotService.parkTheCar(carNumber[2]);
+            parkingLotService.parkTheCar(carNumber[3]);
+        } catch (ParkingLotServiceException exception) {
+            Assert.assertEquals(ParkingLotServiceException.ExceptionType.PARKING_FULL, exception.exceptionType);
+        }
+    }
+
+    @Test
+    public void givenCarToUnPark_WhenCarNotPresent_ShouldThrowAnException() {
+        try {
+            int size = 3;
+            parkingLotService.setParkingLotSize(size);
+            parkingLotService.unParkTheCar("UP12 AB3456");
+        } catch (ParkingLotServiceException exception) {
+            Assert.assertEquals(ParkingLotServiceException.ExceptionType.CAR_NOT_PRESENT, exception.exceptionType);
+        }
     }
 }
