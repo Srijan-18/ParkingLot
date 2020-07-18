@@ -80,4 +80,16 @@ public class ParkingLotTest {
         boolean status = airportSecurity.parkingSpaceAvailability(parkingLotService);
         Assert.assertFalse(status);
     }
+
+    @Test
+    public void givenParkingLot_WhenSpaceAvailableAndQueriedForParkingAvailabilityByOwner_ShouldReturnTrue() {
+        int size = 5;
+        parkingLotService.setParkingLotSize(size);
+        String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
+        for (String car:carNumber)
+            parkingLotService.parkTheCar(car);
+        IAuthority owner = new Owner();
+        boolean status = owner.parkingSpaceAvailability(parkingLotService);
+        Assert.assertTrue(status);
+    }
 }
