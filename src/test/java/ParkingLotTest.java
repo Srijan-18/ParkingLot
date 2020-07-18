@@ -42,7 +42,7 @@ public class ParkingLotTest {
             parkingLotService.parkTheCar(car);
         IAuthority owner = new Owner();
         boolean status = owner.parkingSpaceAvailability(parkingLotService);
-        Assert.assertTrue(status);
+        Assert.assertFalse(status);
     }
 
     @Test
