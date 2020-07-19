@@ -17,6 +17,9 @@ public class ParkingLotService {
     }
 
     public void parkTheCar(String carNumber) {
+        if(this.isCarPresent(carNumber))
+            throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.CAR_ALREADY_PARKED,
+                                                 "CAR ALREADY PARKED" + carNumber );
         if(isParkingLotFull)
             throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.PARKING_FULL,
                                                  "NO MORE SPACE TO PARK " + carNumber );
@@ -44,4 +47,5 @@ public class ParkingLotService {
     public boolean checkParkingLotStatus() {
         return isParkingLotFull;
     }
+
 }
