@@ -14,7 +14,7 @@ public class ParkingLotTest {
 
     @Before
     public void setUp() {
-        parkingLotService = new ParkingLotService();
+        parkingLotService = new ParkingLotService(5);
     }
 
     @Test
@@ -49,10 +49,8 @@ public class ParkingLotTest {
 
     @Test
     public void givenParkingLot_WhenFullAndQueriedForParkingAvailabilityByOwner_ShouldReturnTrue() {
-        int size = 3;
-        parkingLotService.setParkingLotSize(size);
-        String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
-        IntStream.rangeClosed(0,2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
+        String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234", "UP56 QW1235", "UP56 QW1236"};
+        IntStream.rangeClosed(0,4).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
         parkingLotService.notifyObserver();
         Assert.assertTrue(parkingLotService.observers.owner.isParkingLotFull());
     }
@@ -60,10 +58,9 @@ public class ParkingLotTest {
     @Test
     public void givenCarsToPark_WhenAskedToParkBeyondSize_ShouldThrowAnException() {
         try {
-            int size = 3;
-            parkingLotService.setParkingLotSize(size);
-            String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234", "UP31 AS7894"};
-            IntStream.rangeClosed(0,3).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
+            String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234", "UP56 QW1235", "UP56 QW1236",
+                                  "UP56 QW1237"};
+            IntStream.rangeClosed(0,5).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.PARKING_FULL, exception.exceptionType);
         }
@@ -72,8 +69,6 @@ public class ParkingLotTest {
     @Test
     public void givenCarToUnPark_WhenCarNotPresent_ShouldThrowAnException() {
         try {
-            int size = 3;
-            parkingLotService.setParkingLotSize(size);
             parkingLotService.unParkTheCar("UP12 AB3456");
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.CAR_NOT_PRESENT, exception.exceptionType);
@@ -81,29 +76,15 @@ public class ParkingLotTest {
     }
 
     @Test
-    public void givenParkingLot_WhenFullAndQueriedForParkingAvailabilityByAirportSecurity_ShouldReturnFalse() {
-        int size = 4;
-        parkingLotService.setParkingLotSize(size);
-        String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
-        IntStream.rangeClosed(0,2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
+    public void givenParkingLot_WhenFullAndQueriedByAirportAuthority_ShouldReturnTrue() {
+        String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234", "UP56 QW1235", "UP56 QW1236"};
+        IntStream.rangeClosed(0,4).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
         parkingLotService.notifyObserver();
-        Assert.assertFalse(parkingLotService.observers.airportSecurity.isParkingLotFull());
+        Assert.assertTrue(parkingLotService.observers.airportSecurity.isParkingLotFull());
     }
 
     @Test
     public void givenParkingLot_WhenParkingLotNotFullAndCheckedByOwner_ShouldReturnFalse() {
-        int size = 5;
-        parkingLotService.setParkingLotSize(size);
-        String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
-        IntStream.rangeClosed(0,2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
-        parkingLotService.notifyObserver();
-        Assert.assertFalse(parkingLotService.observers.owner.isParkingLotFull());
-    }
-
-    @Test
-    public void checkTest() {
-        int size = 5;
-        parkingLotService.setParkingLotSize(size);
         String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
         IntStream.rangeClosed(0,2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
         parkingLotService.notifyObserver();

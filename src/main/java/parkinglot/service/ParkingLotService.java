@@ -4,47 +4,50 @@ import parkinglot.exception.ParkingLotServiceException;
 import parkinglot.observer.Observer;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 public class ParkingLotService {
 
-    private Map<String, String> parkedCars;
-    private int parkingLotSize;
+    private Map<Integer, String> parkedCars;
     private boolean isParkingLotFull;
     public Observer observers;
+    private ParkingAttendant parkingAttendant;
 
-    public ParkingLotService() {
+    public ParkingLotService(int parkingLotSize) {
         parkedCars = new HashMap<>();
+        IntStream.rangeClosed(1, parkingLotSize).forEachOrdered(i -> parkedCars.put(i, String.valueOf(i)));
         isParkingLotFull = false;
         observers = new Observer();
+        parkingAttendant = new ParkingAttendant();
     }
 
     public void parkTheCar(String carNumber) {
-        if(this.isCarPresent(carNumber))
-            throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.CAR_ALREADY_PARKED,
-                                                 "CAR ALREADY PARKED" + carNumber );
-        if(isParkingLotFull)
-            throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.PARKING_FULL,
-                                                 "NO MORE SPACE TO PARK " + carNumber );
-        parkedCars.put(carNumber, "NON-MEMBER");
-        if(parkedCars.size() == parkingLotSize)
-            isParkingLotFull = true;
+        parkedCars = parkingAttendant.parkTheCar(carNumber , parkedCars);
+        isParkingLotFull = true;
+        for (Integer i = 1; i <= parkedCars.size(); i++)
+                  if (parkedCars.get(i).equals(String.valueOf(i)))
+                    isParkingLotFull = false;
     }
 
     public boolean isCarPresent(String carNumber) {
-        return parkedCars.containsKey(carNumber);
+        return parkingAttendant.isCarPresent(carNumber, parkedCars);
     }
 
     public void unParkTheCar(String carNumber) {
         if(!this.isCarPresent(carNumber))
             throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.CAR_NOT_PRESENT,
                                                  carNumber + " IS NOT PRESENT IN PARKING LOT.");
-        parkedCars.remove(carNumber);
+        Iterator<Map.Entry<Integer, String>> mapIterator = parkedCars.entrySet().iterator();
+        Integer slot = 0;
+        while(mapIterator.hasNext()) {
+            Map.Entry me = mapIterator.next();
+            if(me.getValue().equals(carNumber))
+            slot = (Integer) me.getKey();
+        }
+        parkedCars.put(slot, String.valueOf(slot));
         isParkingLotFull = false;
-    }
-
-    public void setParkingLotSize(int size) {
-        this.parkingLotSize = size;
     }
 
     public void notifyObserver() {
