@@ -11,11 +11,12 @@ public class ParkingLotService {
     private Map<String, String> parkedCars;
     private int parkingLotSize;
     private boolean isParkingLotFull;
-    public Observer observers = new Observer();
+    public Observer observers;
 
     public ParkingLotService() {
         parkedCars = new HashMap<>();
         isParkingLotFull = false;
+        observers = new Observer();
     }
 
     public void parkTheCar(String carNumber) {
