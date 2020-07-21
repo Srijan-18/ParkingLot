@@ -1,6 +1,7 @@
 package parkinglot.service;
 
 import parkinglot.exception.ParkingLotServiceException;
+import parkinglot.observer.Observer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +11,7 @@ public class ParkingLotService {
     private Map<String, String> parkedCars;
     private int parkingLotSize;
     private boolean isParkingLotFull;
+    public Observer observers = new Observer();
 
     public ParkingLotService() {
         parkedCars = new HashMap<>();
@@ -44,8 +46,7 @@ public class ParkingLotService {
         this.parkingLotSize = size;
     }
 
-    public boolean checkParkingLotStatus() {
-        return isParkingLotFull;
+    public void notifyObserver() {
+        observers.notifyAllObservers(isParkingLotFull);
     }
-
 }
