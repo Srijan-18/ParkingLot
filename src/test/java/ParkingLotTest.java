@@ -2,9 +2,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import parkinglot.exception.ParkingLotServiceException;
-import parkinglot.observer.AirportSecurity;
-import parkinglot.service.IObserver;
-import parkinglot.observer.Owner;
 import parkinglot.service.ParkingLotService;
 
 import java.util.stream.IntStream;

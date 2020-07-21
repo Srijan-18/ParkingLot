@@ -36,16 +36,7 @@ public class ParkingLotService {
     }
 
     public void unParkTheCar(String carNumber) {
-        if(!this.isCarPresent(carNumber))
-            throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.CAR_NOT_PRESENT,
-                                                 carNumber + " IS NOT PRESENT IN PARKING LOT.");
-        Iterator<Map.Entry<Integer, String>> mapIterator = parkedCars.entrySet().iterator();
-        Integer slot = 0;
-        while(mapIterator.hasNext()) {
-            Map.Entry me = mapIterator.next();
-            if(me.getValue().equals(carNumber))
-            slot = (Integer) me.getKey();
-        }
+        Integer slot = this.getSlotOfCar(carNumber);
         parkedCars.put(slot, String.valueOf(slot));
         isParkingLotFull = false;
     }
