@@ -53,4 +53,18 @@ public class ParkingLotService {
     public void notifyObserver() {
         observers.notifyAllObservers(isParkingLotFull);
     }
+
+    public Integer getSlotOfCar(String carNumber) {
+        if(!this.isCarPresent(carNumber))
+            throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.CAR_NOT_PRESENT,
+                    carNumber + " IS NOT PRESENT IN PARKING LOT.");
+        Iterator<Map.Entry<Integer, String>> mapIterator = parkedCars.entrySet().iterator();
+        Integer slot = 0;
+        while(mapIterator.hasNext()) {
+            Map.Entry me = mapIterator.next();
+            if(me.getValue().equals(carNumber))
+                slot = (Integer) me.getKey();
+        }
+        return slot;
+    }
 }

@@ -90,4 +90,23 @@ public class ParkingLotTest {
         parkingLotService.notifyObserver();
         Assert.assertFalse(parkingLotService.observers.owner.isParkingLotFull());
     }
+
+    @Test
+    public void givenCarNumber_WhenParkedAndQueriedAboutSlot_ShouldReturnSlotNumber() {
+        String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
+        IntStream.rangeClosed(0,2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
+        int slot = parkingLotService.getSlotOfCar(carNumber[2]);
+        Assert.assertEquals(3, slot);
+    }
+
+    @Test
+    public void givenCarNumber_WhenNotParkedAndQueriedAboutSlot_ShouldThrowAnException() {
+        try {
+            String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
+            IntStream.rangeClosed(0,2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
+            parkingLotService.getSlotOfCar("UP11 AA1111");
+        } catch (ParkingLotServiceException e) {
+            Assert.assertEquals(ParkingLotServiceException.ExceptionType.CAR_NOT_PRESENT, e.exceptionType);
+        }
+    }
 }
