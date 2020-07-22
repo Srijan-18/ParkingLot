@@ -11,10 +11,14 @@ import java.util.stream.IntStream;
 
 public class ParkingLotTest {
     private ParkingLotService parkingLotService;
+    private AirportSecurity airportSecurity;
+    private Owner owner;
 
     @Before
     public void setUp() {
         parkingLotService = new ParkingLotService(5);
+        airportSecurity = new AirportSecurity();
+        owner = new Owner();
     }
 
     @Test
@@ -49,10 +53,10 @@ public class ParkingLotTest {
 
     @Test
     public void givenParkingLot_WhenFullAndQueriedForParkingAvailabilityByOwner_ShouldReturnTrue() {
+        parkingLotService.registerObserver(owner);
         String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234", "UP56 QW1235", "UP56 QW1236"};
         IntStream.rangeClosed(0,4).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
-        parkingLotService.notifyObserver();
-        Assert.assertTrue(parkingLotService.observers.owner.isParkingLotFull());
+        Assert.assertTrue(owner.isParkingLotFull());
     }
 
     @Test
@@ -77,17 +81,17 @@ public class ParkingLotTest {
 
     @Test
     public void givenParkingLot_WhenFullAndQueriedByAirportAuthority_ShouldReturnTrue() {
+        parkingLotService.registerObserver(airportSecurity);
         String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234", "UP56 QW1235", "UP56 QW1236"};
         IntStream.rangeClosed(0,4).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
-        parkingLotService.notifyObserver();
-        Assert.assertTrue(parkingLotService.observers.airportSecurity.isParkingLotFull());
+        Assert.assertTrue(airportSecurity.isParkingLotFull());
     }
 
     @Test
     public void givenParkingLot_WhenParkingLotNotFullAndCheckedByOwner_ShouldReturnFalse() {
+        parkingLotService.registerObserver(owner);
         String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
         IntStream.rangeClosed(0,2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
-        parkingLotService.notifyObserver();
-        Assert.assertFalse(parkingLotService.observers.owner.isParkingLotFull());
+        Assert.assertFalse(owner.isParkingLotFull());
     }
 }
