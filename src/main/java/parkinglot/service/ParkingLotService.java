@@ -1,9 +1,10 @@
 package parkinglot.service;
 
 import parkinglot.exception.ParkingLotServiceException;
-import parkinglot.observer.Observer;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class ParkingLotService {
@@ -11,12 +12,12 @@ public class ParkingLotService {
     private Map<String, String> parkedCars;
     private int parkingLotSize;
     private boolean isParkingLotFull;
-    public Observer observers;
+    private List<IObserver> observersList ;
 
     public ParkingLotService() {
         parkedCars = new HashMap<>();
         isParkingLotFull = false;
-        observers = new Observer();
+        observersList = new LinkedList<>();
     }
 
     public void parkTheCar(String carNumber) {
@@ -29,6 +30,7 @@ public class ParkingLotService {
         parkedCars.put(carNumber, "NON-MEMBER");
         if(parkedCars.size() == parkingLotSize)
             isParkingLotFull = true;
+        this.notifyObservers();
     }
 
     public boolean isCarPresent(String carNumber) {
@@ -41,13 +43,20 @@ public class ParkingLotService {
                                                  carNumber + " IS NOT PRESENT IN PARKING LOT.");
         parkedCars.remove(carNumber);
         isParkingLotFull = false;
+        this.notifyObservers();
     }
 
     public void setParkingLotSize(int size) {
         this.parkingLotSize = size;
     }
 
-    public void notifyObserver() {
-        observers.notifyAllObservers(isParkingLotFull);
+    private void notifyObservers() {
+        for (IObserver observer: observersList) {
+            observer.setParkingLotStatus(isParkingLotFull);
+        }
+    }
+
+    public void registerObserver(IObserver observer) {
+        observersList.add(observer);
     }
 }

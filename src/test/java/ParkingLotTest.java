@@ -3,7 +3,6 @@ import org.junit.Before;
 import org.junit.Test;
 import parkinglot.exception.ParkingLotServiceException;
 import parkinglot.observer.AirportSecurity;
-import parkinglot.service.IObserver;
 import parkinglot.observer.Owner;
 import parkinglot.service.ParkingLotService;
 
@@ -11,10 +10,13 @@ import java.util.stream.IntStream;
 
 public class ParkingLotTest {
     private ParkingLotService parkingLotService;
-
+    private AirportSecurity airportSecurity;
+    private Owner owner;
     @Before
     public void setUp() {
         parkingLotService = new ParkingLotService();
+        airportSecurity = new AirportSecurity();
+        owner = new Owner();
     }
 
     @Test
@@ -51,10 +53,10 @@ public class ParkingLotTest {
     public void givenParkingLot_WhenFullAndQueriedForParkingAvailabilityByOwner_ShouldReturnTrue() {
         int size = 3;
         parkingLotService.setParkingLotSize(size);
+        parkingLotService.registerObserver(owner);
         String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
         IntStream.rangeClosed(0,2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
-        parkingLotService.notifyObserver();
-        Assert.assertTrue(parkingLotService.observers.owner.isParkingLotFull());
+        Assert.assertTrue(owner.isParkingLotFull());
     }
 
     @Test
@@ -84,29 +86,19 @@ public class ParkingLotTest {
     public void givenParkingLot_WhenFullAndQueriedForParkingAvailabilityByAirportSecurity_ShouldReturnFalse() {
         int size = 4;
         parkingLotService.setParkingLotSize(size);
+        parkingLotService.registerObserver(airportSecurity);
         String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
         IntStream.rangeClosed(0,2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
-        parkingLotService.notifyObserver();
-        Assert.assertFalse(parkingLotService.observers.airportSecurity.isParkingLotFull());
+        Assert.assertFalse(airportSecurity.isParkingLotFull());
     }
 
     @Test
     public void givenParkingLot_WhenParkingLotNotFullAndCheckedByOwner_ShouldReturnFalse() {
         int size = 5;
         parkingLotService.setParkingLotSize(size);
+        parkingLotService.registerObserver(owner);
         String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
         IntStream.rangeClosed(0,2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
-        parkingLotService.notifyObserver();
-        Assert.assertFalse(parkingLotService.observers.owner.isParkingLotFull());
-    }
-
-    @Test
-    public void checkTest() {
-        int size = 5;
-        parkingLotService.setParkingLotSize(size);
-        String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
-        IntStream.rangeClosed(0,2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
-        parkingLotService.notifyObserver();
-        Assert.assertFalse(parkingLotService.observers.owner.isParkingLotFull());
+        Assert.assertFalse(owner.isParkingLotFull());
     }
 }
