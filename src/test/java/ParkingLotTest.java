@@ -112,4 +112,23 @@ public class ParkingLotTest {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.CAR_NOT_PRESENT, e.exceptionType);
         }
     }
+
+    @Test
+    public void givenCarNumber_whenParked_ShouldReturnParkingTime() {
+        String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
+        IntStream.rangeClosed(0, 2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
+        String checkTime = owner.getTimeOfCar(carNumber[2]);
+        Assert.assertEquals(parkingLotService.timeOfParking.get(carNumber[2]), checkTime);
+    }
+
+    @Test
+    public void givenCarNumberANdAskedTimeOfParking_WhenNotParked_ShouldThrowAnException() {
+        try {
+            String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
+            IntStream.rangeClosed(0, 2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
+            owner.getTimeOfCar("UP11 AA1111");
+        } catch (ParkingLotServiceException exception) {
+            Assert.assertEquals(ParkingLotServiceException.ExceptionType.CAR_NOT_PRESENT, exception.exceptionType);
+        }
+    }
 }
