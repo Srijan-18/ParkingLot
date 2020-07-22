@@ -2,16 +2,22 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import parkinglot.exception.ParkingLotServiceException;
+import parkinglot.observer.AirportSecurity;
+import parkinglot.observer.Owner;
 import parkinglot.service.ParkingLotService;
 
 import java.util.stream.IntStream;
 
 public class ParkingLotTest {
     private ParkingLotService parkingLotService;
+    private AirportSecurity airportSecurity;
+    private Owner owner;
 
     @Before
     public void setUp() {
         parkingLotService = new ParkingLotService(5);
+        airportSecurity = new AirportSecurity();
+        owner = new Owner();
     }
 
     @Test
@@ -46,18 +52,18 @@ public class ParkingLotTest {
 
     @Test
     public void givenParkingLot_WhenFullAndQueriedForParkingAvailabilityByOwner_ShouldReturnTrue() {
+        parkingLotService.registerObserver(owner);
         String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234", "UP56 QW1235", "UP56 QW1236"};
-        IntStream.rangeClosed(0,4).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
-        parkingLotService.notifyObserver();
-        Assert.assertTrue(parkingLotService.observers.owner.isParkingLotFull());
+        IntStream.rangeClosed(0, 4).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
+        Assert.assertTrue(owner.isParkingLotFull());
     }
 
     @Test
     public void givenCarsToPark_WhenAskedToParkBeyondSize_ShouldThrowAnException() {
         try {
             String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234", "UP56 QW1235", "UP56 QW1236",
-                                  "UP56 QW1237"};
-            IntStream.rangeClosed(0,5).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
+                    "UP56 QW1237"};
+            IntStream.rangeClosed(0, 5).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.PARKING_FULL, exception.exceptionType);
         }
@@ -74,24 +80,24 @@ public class ParkingLotTest {
 
     @Test
     public void givenParkingLot_WhenFullAndQueriedByAirportAuthority_ShouldReturnTrue() {
+        parkingLotService.registerObserver(airportSecurity);
         String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234", "UP56 QW1235", "UP56 QW1236"};
-        IntStream.rangeClosed(0,4).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
-        parkingLotService.notifyObserver();
-        Assert.assertTrue(parkingLotService.observers.airportSecurity.isParkingLotFull());
+        IntStream.rangeClosed(0, 4).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
+        Assert.assertTrue(airportSecurity.isParkingLotFull());
     }
 
     @Test
     public void givenParkingLot_WhenParkingLotNotFullAndCheckedByOwner_ShouldReturnFalse() {
+        parkingLotService.registerObserver(owner);
         String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
-        IntStream.rangeClosed(0,2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
-        parkingLotService.notifyObserver();
-        Assert.assertFalse(parkingLotService.observers.owner.isParkingLotFull());
+        IntStream.rangeClosed(0, 2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
+        Assert.assertFalse(owner.isParkingLotFull());
     }
 
     @Test
     public void givenCarNumber_WhenParkedAndQueriedAboutSlot_ShouldReturnSlotNumber() {
         String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
-        IntStream.rangeClosed(0,2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
+        IntStream.rangeClosed(0, 2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
         int slot = parkingLotService.getSlotOfCar(carNumber[2]);
         Assert.assertEquals(3, slot);
     }
@@ -100,7 +106,7 @@ public class ParkingLotTest {
     public void givenCarNumber_WhenNotParkedAndQueriedAboutSlot_ShouldThrowAnException() {
         try {
             String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
-            IntStream.rangeClosed(0,2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
+            IntStream.rangeClosed(0, 2).forEachOrdered(i -> parkingLotService.parkTheCar(carNumber[i]));
             parkingLotService.getSlotOfCar("UP11 AA1111");
         } catch (ParkingLotServiceException e) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.CAR_NOT_PRESENT, e.exceptionType);
