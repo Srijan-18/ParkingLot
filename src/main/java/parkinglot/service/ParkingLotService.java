@@ -1,75 +1,88 @@
 package parkinglot.service;
 
 import parkinglot.exception.ParkingLotServiceException;
-import parkinglot.observer.Owner;
+import parkinglot.utility.ParkingUtility;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.IntStream;
 
 public class ParkingLotService {
 
-    private Map<Integer, String> parkedCars;
-    private boolean isParkingLotFull;
-    private List<IObserver> observersList;
-    private ParkingAttendant parkingAttendant;
-    public Map<String, String> timeOfParking;
-    private Owner owner = new Owner();
+    private List<Slot> parkedCars;
+    private int parkingLotSize;
+    private List<IAuthority> observerList;
 
     public ParkingLotService(int parkingLotSize) {
-        parkedCars = new HashMap<>();
-        IntStream.rangeClosed(1, parkingLotSize).forEachOrdered(i -> parkedCars.put(i, String.valueOf(i)));
-        isParkingLotFull = false;
-        timeOfParking = new HashMap<>();
-        observersList = new LinkedList<>();
-        parkingAttendant = new ParkingAttendant();
+        this.parkingLotSize = parkingLotSize;
+        parkedCars = new ArrayList<>(Collections.nCopies(this.parkingLotSize, null));
+        //IntStream.range(0, this.parkingLotSize).forEachOrdered(slot -> parkedCars.add(slot, null));
+        observerList = new ArrayList<>();
     }
 
-    public void parkTheCar(String carNumber) {
-        parkedCars = parkingAttendant.parkTheCar(carNumber, parkedCars);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        Date date = new Date();
-        timeOfParking.put(carNumber, formatter.format(date));
-        isParkingLotFull = true;
-        for (Integer i = 1; i <= parkedCars.size(); i++)
-            if (parkedCars.get(i).equals(String.valueOf(i)))
-                isParkingLotFull = false;
-        this.notifyObservers();
-        owner.setParkingTimeMap(timeOfParking);
+    public void parkTheVehicle(Object vehicle) {
+        if (this.checkParkingLotStatus())
+            throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.PARKING_FULL,
+                    "NO MORE SPACE TO PARK ");
+        if (isVehiclePresent(vehicle))
+            throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.VEHICLE_ALREADY_PARKED,
+                    "GIVEN VEHICLE IS ALREADY PRESENT IN PARKING LOT.");
+        parkedCars.set(this.generateParkingSlotToPark(), new Slot(vehicle, new ParkingUtility().getCurrentDateTime()));
+        if (checkParkingLotStatus())
+            this.notifyObservers();
     }
 
-    public boolean isCarPresent(String carNumber) {
-        return parkingAttendant.isCarPresent(carNumber, parkedCars);
+    public boolean isVehiclePresent(Object vehicle) {
+        return parkedCars.stream().anyMatch(slot -> slot != null && slot.getVehicle() == vehicle);
     }
 
-    public void unParkTheCar(String carNumber) {
-        Integer slot = this.getSlotOfCar(carNumber);
-        parkedCars.put(slot, String.valueOf(slot));
-        timeOfParking.remove(carNumber);
-        isParkingLotFull = false;
-        this.notifyObservers();
-        owner.setParkingTimeMap(timeOfParking);
+    public void unParkTheVehicle(Object vehicle) {
+        if (!isVehiclePresent(vehicle))
+            throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT,
+                    "GIVEN VEHICLE IS NOT PRESENT IN PARKING LOT.");
+        parkedCars.stream().filter(slot -> slot != null && slot.getVehicle() == vehicle)
+                           .forEach(slot -> parkedCars.set(parkedCars.indexOf(slot), null));
+    }
+
+    public boolean checkParkingLotStatus() {
+        return this.parkingLotSize == IntStream.range(0, this.parkingLotSize)
+                .filter(slot -> parkedCars.get(slot) == null)
+                .findFirst().orElse(this.parkingLotSize);
+    }
+
+    public void addObserver(IAuthority authority) {
+        this.observerList.add(authority);
     }
 
     private void notifyObservers() {
-        observersList.forEach(observer -> observer.setParkingLotStatus(isParkingLotFull));
-    }
-
-    public Integer getSlotOfCar(String carNumber) {
-        if (!this.isCarPresent(carNumber))
-            throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.CAR_NOT_PRESENT,
-                    carNumber + " IS NOT PRESENT IN PARKING LOT.");
-        Iterator<Map.Entry<Integer, String>> mapIterator = parkedCars.entrySet().iterator();
-        Integer slot = 0;
-        while (mapIterator.hasNext()) {
-            Map.Entry me = mapIterator.next();
-            if (me.getValue().equals(carNumber))
-                slot = (Integer) me.getKey();
+        for (IAuthority observer : observerList) {
+            observer.fullCapacityReached(this.checkParkingLotStatus());
         }
-        return slot;
     }
 
-    public void registerObserver(IObserver observer) {
-        observersList.add(observer);
+    private int generateParkingSlotToPark() {
+        return IntStream.range(0, this.parkingLotSize)
+                .filter(index -> parkedCars.get(index) == null)
+                .findFirst().orElse(-1);
+    }
+
+    public int getSlotOfParkedVehicle(Object vehicle) {
+        for (Slot slot : parkedCars) {
+            if (slot != null && slot.getVehicle() == vehicle) {
+                return parkedCars.indexOf(slot) + 1;
+            }
+        }
+        throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT,
+                "VEHICLE NOT PRESENT");
+    }
+
+    public String getTimeOfParkingForVehicle(Object vehicle) {
+        for (Slot slot : parkedCars) {
+            if (slot != null && slot.getVehicle() == vehicle)
+                return slot.getCurrentDateTime();
+        }
+        throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT,
+                                             "VEHICLE NOT PRESENT IN PARKING LOT.");
     }
 }
