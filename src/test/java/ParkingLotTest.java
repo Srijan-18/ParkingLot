@@ -93,11 +93,10 @@ public class ParkingLotTest {
 
     @Test
     public void givenAVehicleNotPresentInParkingLot_WhenQueriedForSlotNumber_ShouldThrowAnException() {
-        try
-        {
+        try {
             parkingLotService.getSlotOfParkedVehicle(new Object());
         } catch (ParkingLotServiceException exception) {
-            Assert.assertEquals(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT, exception.exceptionType );
+            Assert.assertEquals(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT, exception.exceptionType);
         }
     }
 
@@ -109,7 +108,7 @@ public class ParkingLotTest {
             parkingLotService.parkTheVehicle(vehicle);
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.VEHICLE_ALREADY_PARKED,
-                                exception.exceptionType);
+                    exception.exceptionType);
         }
     }
 
@@ -120,5 +119,14 @@ public class ParkingLotTest {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm");
         LocalDateTime now = LocalDateTime.now();
         Assert.assertEquals(dtf.format(now), parkingLotService.getTimeOfParkingForVehicle(vehicle));
+    }
+
+    @Test
+    public void givenVehicleNotPresentInParkingLot_WhenQueriedForTime_ShouldThrowAnException() {
+        try {
+            parkingLotService.getTimeOfParkingForVehicle(new Object());
+        } catch (ParkingLotServiceException exception) {
+            Assert.assertEquals(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT, exception.exceptionType);
+        }
     }
 }

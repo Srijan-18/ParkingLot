@@ -17,7 +17,6 @@ public class ParkingLotService {
     public ParkingLotService(int parkingLotSize) {
         this.parkingLotSize = parkingLotSize;
         parkedCars = new ArrayList<>(Collections.nCopies(this.parkingLotSize, null));
-        //IntStream.range(0, this.parkingLotSize).forEachOrdered(slot -> parkedCars.add(slot, null));
         observerList = new ArrayList<>();
     }
 
@@ -42,7 +41,7 @@ public class ParkingLotService {
             throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT,
                     "GIVEN VEHICLE IS NOT PRESENT IN PARKING LOT.");
         parkedCars.stream().filter(slot -> slot != null && slot.getVehicle() == vehicle)
-                           .forEach(slot -> parkedCars.set(parkedCars.indexOf(slot), null));
+                .forEach(slot -> parkedCars.set(parkedCars.indexOf(slot), null));
     }
 
     public boolean checkParkingLotStatus() {
@@ -83,6 +82,6 @@ public class ParkingLotService {
                 return slot.getCurrentDateTime();
         }
         throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT,
-                                             "VEHICLE NOT PRESENT IN PARKING LOT.");
+                "VEHICLE NOT PRESENT IN PARKING LOT.");
     }
 }
