@@ -2,46 +2,38 @@ package parkinglot.service;
 
 import parkinglot.exception.ParkingLotServiceException;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ParkingLotService {
 
-    private Map<String, String> parkedCars;
+    private List<Object> parkedCars;
     private int parkingLotSize;
-    private boolean isParkingLotFull;
 
-    public ParkingLotService() {
-        parkedCars = new HashMap<>();
-        isParkingLotFull = false;
+    public ParkingLotService(int parkingLotSize) {
+        this.parkingLotSize = parkingLotSize;
+        parkedCars = new ArrayList<>(this.parkingLotSize);
     }
 
-    public void parkTheCar(String carNumber) {
-        if(isParkingLotFull)
+    public void parkTheVehicle(Object vehicle) {
+        if (this.checkParkingLotStatus())
             throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.PARKING_FULL,
-                                                 "NO MORE SPACE TO PARK " + carNumber );
-        parkedCars.put(carNumber, carNumber);
-        if(parkedCars.size() == parkingLotSize)
-            isParkingLotFull = true;
+                    "NO MORE SPACE TO PARK ");
+        parkedCars.add(vehicle);
     }
 
-    public boolean isCarPresent(String carNumber) {
-        return parkedCars.containsKey(carNumber);
+    public boolean isVehiclePresent(Object vehicle) {
+        return parkedCars.contains(vehicle);
     }
 
-    public void unParkTheCar(String carNumber) {
-        if(!isCarPresent(carNumber))
+    public void unParkTheVehicle(Object vehicle) {
+        if (!isVehiclePresent(vehicle))
             throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.CAR_NOT_PRESENT,
-                                                 carNumber + " IS NOT PRESENT IN PARKING LOT.");
-        parkedCars.remove(carNumber);
-        isParkingLotFull = false;
-    }
-
-    public void setParkingLotSize(int size) {
-        this.parkingLotSize = size;
+                    "GIVEN VEHICLE IS NOT PRESENT IN PARKING LOT.");
+        parkedCars.remove(vehicle);
     }
 
     public boolean checkParkingLotStatus() {
-        return isParkingLotFull;
+        return this.parkingLotSize == this.parkedCars.size();
     }
 }

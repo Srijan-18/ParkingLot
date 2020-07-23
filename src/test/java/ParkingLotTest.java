@@ -6,63 +6,56 @@ import parkinglot.service.ParkingLotService;
 
 public class ParkingLotTest {
     private ParkingLotService parkingLotService;
+
     @Before
-    public void setUp()  {
-        parkingLotService = new ParkingLotService();
+    public void setUp() {
+        parkingLotService = new ParkingLotService(3);
     }
 
     @Test
-    public void givenCarRegistrationNumber_WhenParked_ShouldReturnTrue() {
-        String carNumber = "UP12 AN3456";
-        parkingLotService.parkTheCar(carNumber);
-        boolean status = parkingLotService.isCarPresent(carNumber);
+    public void givenAVehicle_WhenParked_ShouldReturnTrue() {
+        Object vehicle = new Object();
+        parkingLotService.parkTheVehicle(vehicle);
+        boolean status = parkingLotService.isVehiclePresent(vehicle);
         Assert.assertTrue(status);
     }
 
     @Test
-    public void givenCarRegistrationNumber_WhenUnParked_ShouldReturnFalse() {
-        String carNumber1 = "UP12 AN3456";
-        String carNumber2 = "UP34 AN5678";
-        parkingLotService.parkTheCar(carNumber1);
-        parkingLotService.parkTheCar(carNumber2);
-        parkingLotService.unParkTheCar(carNumber1);
-        boolean status = parkingLotService.isCarPresent(carNumber1);
+    public void givenAVehicleParked_WhenUnParked_ShouldReturnFalse() {
+        Object vehicle = new Object();
+        parkingLotService.parkTheVehicle(vehicle);
+        parkingLotService.unParkTheVehicle(vehicle);
+        boolean status = parkingLotService.isVehiclePresent(vehicle);
         Assert.assertFalse(status);
     }
 
     @Test
-    public void givenParkingLotWithItsSize_WhenFullyOccupied_ShoulReturnTrue() {
-        int size = 3;
-        parkingLotService.setParkingLotSize(size);
-        String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234"};
-        parkingLotService.parkTheCar(carNumber[0]);
-        parkingLotService.parkTheCar(carNumber[1]);
-        parkingLotService.parkTheCar(carNumber[2]);
+    public void givenParkingLotWithItsSize_WhenFullyOccupied_ShouldReturnTrue() {
+        Object[] vehicle = {new Object(), new Object(), new Object()};
+        parkingLotService.parkTheVehicle(vehicle[0]);
+        parkingLotService.parkTheVehicle(vehicle[1]);
+        parkingLotService.parkTheVehicle(vehicle[2]);
         boolean status = parkingLotService.checkParkingLotStatus();
         Assert.assertTrue(status);
     }
 
     @Test
-    public void givenCarsToPark_WhenAskedToParkBeyondSize_ShouldThrowAnException() {
+    public void givenVehiclesToPark_WhenAskedToParkBeyondSize_ShouldThrowAnException() {
         try {
-            int size = 3;
-            parkingLotService.setParkingLotSize(size);
-            String[] carNumber = {"UP12 AN3456", "UP34 AN5678", "UP56 QW1234", "UP31 AS7894"};
-            parkingLotService.parkTheCar(carNumber[0]);
-            parkingLotService.parkTheCar(carNumber[1]);
-            parkingLotService.parkTheCar(carNumber[2]);
-            parkingLotService.parkTheCar(carNumber[3]);
+            Object[] vehicle = {new Object(), new Object(), new Object(), new Object()};
+            parkingLotService.parkTheVehicle(vehicle[0]);
+            parkingLotService.parkTheVehicle(vehicle[1]);
+            parkingLotService.parkTheVehicle(vehicle[2]);
+            parkingLotService.parkTheVehicle(vehicle[3]);
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.PARKING_FULL, exception.exceptionType);
         }
     }
 
     @Test
-    public void givenCarToUnPark_WhenCarNotPresent_ShouldThrowAnException() {
+    public void givenVehicleToUnPark_WhenNotPresent_ShouldThrowAnException() {
         try {
-            int size = 3;
-            parkingLotService.setParkingLotSize(size);
-            parkingLotService.unParkTheCar("UP12 AB3456");
+            parkingLotService.unParkTheVehicle(new Object());
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.CAR_NOT_PRESENT, exception.exceptionType);
         }
