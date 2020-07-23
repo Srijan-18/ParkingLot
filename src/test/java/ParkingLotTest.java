@@ -5,10 +5,10 @@ import parkinglot.service.ParkingLotService;
 public class ParkingLotTest {
     @Test
     public void givenCarRegistrationNumber_WhenParked_ShouldReturnTrue() {
-        String carNumber = "UP12 AN3456";
+        Object vehicle = new Object();
         ParkingLotService parkingLotService = new ParkingLotService();
-        parkingLotService.parkTheCar(carNumber);
-        boolean status = parkingLotService.isCarPresent(carNumber);
+        parkingLotService.parkTheCar(vehicle);
+        boolean status = parkingLotService.isCarPresent(vehicle);
         Assert.assertTrue(status);
     }
 }
