@@ -2,5 +2,6 @@ package parkinglot.service;
 
 public interface IAuthority {
 
-    boolean parkingSpaceAvailability(ParkingLotService parkingLotService);
+    void fullCapacityReached(boolean status);
+    boolean getParkingLotStatus();
 }
