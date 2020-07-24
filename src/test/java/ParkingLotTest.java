@@ -134,7 +134,31 @@ public class ParkingLotTest {
     public void givenMultipleParkingLotsAndVehicles_WhenParked_ShouldDistributeThemEvenly() {
         ParkingLotService lotService = new ParkingLotService(3, 3);
         Object[] vehicles = {new Object(), new Object(), new Object(), new Object()};
-        Arrays.stream(vehicles).forEachOrdered(vehicle -> lotService.parkTheVehicle(vehicle));
-        Assert.assertEquals(12, lotService.getSlotOfParkedVehicle(vehicles[3]));
+        Arrays.stream(vehicles).forEachOrdered(lotService::parkTheVehicle);
+        Assert.assertEquals("P:2 S:1", lotService.getSlotOfParkedVehicle(vehicles[1]));
+    }
+
+    @Test
+    public void givenAVehicle_WhenAlreadyParkedInAnyOfLots_ShouldThrowAnException() {
+        try {
+            ParkingLotService lotService = new ParkingLotService(3, 3);
+            Object[] vehicles = {new Object(), new Object(), new Object(), new Object()};
+            Arrays.stream(vehicles).forEachOrdered(lotService::parkTheVehicle);
+            lotService.parkTheVehicle(vehicles[1]);
+        } catch (ParkingLotServiceException exception) {
+            Assert.assertEquals(ParkingLotServiceException.ExceptionType.VEHICLE_ALREADY_PARKED,
+                    exception.exceptionType);
+        }
+    }
+
+    @Test
+    public void givenVehiclesToParkInMultipleLots_WhenExceedSize_ShouldThrowAnException() {
+        try {
+            ParkingLotService lotService = new ParkingLotService(2, 2);
+            Object[] vehicles = {new Object(), new Object(), new Object(), new Object(), new Object()};
+            Arrays.stream(vehicles).forEachOrdered(lotService::parkTheVehicle);
+        } catch (ParkingLotServiceException exception) {
+            Assert.assertEquals(ParkingLotServiceException.ExceptionType.PARKING_FULL, exception.exceptionType);
+        }
     }
 }
