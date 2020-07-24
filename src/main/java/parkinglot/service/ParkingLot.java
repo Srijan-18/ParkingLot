@@ -13,7 +13,6 @@ public class ParkingLot {
     public List<Slot> parkedCars;
     private int parkingLotSize;
 
-
     public ParkingLot(int parkingLotSize) {
         this.parkingLotSize = parkingLotSize;
         parkedCars = new ArrayList<>(Collections.nCopies(parkingLotSize, null));
