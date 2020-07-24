@@ -5,19 +5,30 @@ import parkinglot.utility.ParkingUtility;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
 public class ParkingLotService {
-
-    private List<Slot> parkedCars;
-    private int parkingLotSize;
+    private final int LOT_FACTOR;
+    private static final int INDEX_FACTOR = 1;
+    private final int numberOfLots;
+    private List<ParkingLot> parkingLots;
+    private final int parkingLotSize;
     private List<IAuthority> observerList;
 
-    public ParkingLotService(int parkingLotSize) {
+    public ParkingLotService(int parkingLotSize, int numberOfLots) {
+        this.numberOfLots = numberOfLots;
+        this.parkingLots = new ArrayList<>();
+        IntStream.range(0, numberOfLots)
+                .forEachOrdered(index -> parkingLots.add(index, new ParkingLot(parkingLotSize)));
         this.parkingLotSize = parkingLotSize;
-        parkedCars = new ArrayList<>(Collections.nCopies(this.parkingLotSize, null));
         observerList = new ArrayList<>();
+        LOT_FACTOR = this.initialiseLotFactor(parkingLotSize);
+    }
+
+    private int initialiseLotFactor(int parkingLotSize) {
+        return (int) Math.pow(10, String.valueOf(parkingLotSize).length());
     }
 
     public void parkTheVehicle(Object vehicle) {
@@ -27,61 +38,84 @@ public class ParkingLotService {
         if (isVehiclePresent(vehicle))
             throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.VEHICLE_ALREADY_PARKED,
                     "GIVEN VEHICLE IS ALREADY PRESENT IN PARKING LOT.");
-        parkedCars.set(this.generateParkingSlotToPark(), new Slot(vehicle, new ParkingUtility().getCurrentDateTime()));
+        ParkingLot parkingLotToPark = this.getTheLotToPark(parkingLots);
+        int slotToPark = this.generateParkingSlotToPark(parkingLotToPark);
+        parkingLotToPark.parkedCars.set(slotToPark, new Slot(vehicle, new ParkingUtility().getCurrentDateTime()));
         if (checkParkingLotStatus())
-            this.notifyObservers();
+            this.notifyObserversOfFullParkingLot();
     }
 
     public boolean isVehiclePresent(Object vehicle) {
-        return parkedCars.stream().anyMatch(slot -> slot != null && slot.getVehicle() == vehicle);
+        return parkingLots.stream().findFirst()
+                .filter(parkingLot -> parkingLot.parkedCars.stream()
+                        .anyMatch(slot -> slot != null && slot.getVehicle() == vehicle)).isPresent();
     }
 
+
     public void unParkTheVehicle(Object vehicle) {
-        if (!isVehiclePresent(vehicle))
-            throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT,
-                    "GIVEN VEHICLE IS NOT PRESENT IN PARKING LOT.");
-        parkedCars.stream().filter(slot -> slot != null && slot.getVehicle() == vehicle)
-                .forEach(slot -> parkedCars.set(parkedCars.indexOf(slot), null));
+        ParkingLot lotOfVehicle = this.getLotOfParkedVehicle(vehicle);
+        lotOfVehicle.parkedCars.stream().filter(slot -> slot != null && slot.getVehicle() == vehicle)
+                .forEach(slot -> lotOfVehicle.parkedCars.set(lotOfVehicle.parkedCars.indexOf(slot), null));
+        if (!checkParkingLotStatus())
+            this.notifyObserversOfAvailability();
+    }
+
+    private void notifyObserversOfAvailability() {
+        for (IAuthority observer : observerList) {
+            observer.spaceAvailableForParking();
+        }
     }
 
     public boolean checkParkingLotStatus() {
-        return this.parkingLotSize == IntStream.range(0, this.parkingLotSize)
-                .filter(slot -> parkedCars.get(slot) == null)
-                .findFirst().orElse(this.parkingLotSize);
+        int carsParked = parkingLots.stream().mapToInt(ParkingLot::getNumberOfVehiclesParked).sum();
+        return this.numberOfLots * this.parkingLotSize == carsParked;
     }
 
     public void addObserver(IAuthority authority) {
         this.observerList.add(authority);
     }
 
-    private void notifyObservers() {
+    private void notifyObserversOfFullParkingLot() {
         for (IAuthority observer : observerList) {
-            observer.fullCapacityReached(this.checkParkingLotStatus());
+            observer.fullCapacityReached();
         }
     }
 
-    private int generateParkingSlotToPark() {
-        return IntStream.range(0, this.parkingLotSize)
-                .filter(index -> parkedCars.get(index) == null)
+    private int generateParkingSlotToPark(ParkingLot parkingLot) {
+        return IntStream.range(0, parkingLot.parkedCars.size())
+                .filter(index -> parkingLot.parkedCars.get(index) == null)
                 .findFirst().orElse(-1);
     }
 
     public int getSlotOfParkedVehicle(Object vehicle) {
-        for (Slot slot : parkedCars) {
-            if (slot != null && slot.getVehicle() == vehicle) {
-                return parkedCars.indexOf(slot) + 1;
+       ParkingLot parkingLot = this.getLotOfParkedVehicle(vehicle);
+       int slotNumberInItsLot =  parkingLot.getSlotOfVehicleParked(vehicle);
+        return (((parkingLots.indexOf(parkingLot) + INDEX_FACTOR)
+                * LOT_FACTOR) + slotNumberInItsLot + INDEX_FACTOR);
+    }
+
+    private ParkingLot getLotOfParkedVehicle(Object vehicle) {
+        for (ParkingLot parkingLot : parkingLots)
+            for (Slot slot : parkingLot.parkedCars) {
+                if (slot != null && slot.getVehicle() == vehicle) {
+                    return parkingLot;
+                }
             }
-        }
         throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT,
                 "VEHICLE NOT PRESENT");
     }
 
     public String getTimeOfParkingForVehicle(Object vehicle) {
-        for (Slot slot : parkedCars) {
-            if (slot != null && slot.getVehicle() == vehicle)
-                return slot.getCurrentDateTime();
-        }
+        for (ParkingLot parkingLot : parkingLots)
+            if (parkingLot.getTimeOfParking(vehicle) != null)
+                return parkingLot.getTimeOfParking(vehicle);
         throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT,
                 "VEHICLE NOT PRESENT IN PARKING LOT.");
+    }
+
+    private ParkingLot getTheLotToPark(List<ParkingLot> parkingLots) {
+        List<ParkingLot> parkingLotList = parkingLots;
+        Collections.sort(parkingLotList, Comparator.comparing(parkingLot -> parkingLot.getNumberOfVehiclesParked()));
+        return parkingLotList.get(0);
     }
 }

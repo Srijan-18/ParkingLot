@@ -1,8 +1,8 @@
 package parkinglot.service;
 
 public class Slot {
-    Object vehicle;
-    String currentDateTime;
+    private Object vehicle;
+    private String currentDateTime;
 
     public Slot(Object vehicle, String currentDateTime) {
         this.vehicle = vehicle;

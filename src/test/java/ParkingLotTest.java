@@ -17,7 +17,7 @@ public class ParkingLotTest {
 
     @Before
     public void setUp() {
-        parkingLotService = new ParkingLotService(3);
+        parkingLotService = new ParkingLotService(3, 1);
         airportSecurity = new AirportSecurity();
         owner = new Owner();
         parkingLotService.addObserver(owner);
@@ -88,7 +88,7 @@ public class ParkingLotTest {
     public void givenAParkedVehicle_WhenQueriedForSlotNumber_ShouldReturnSlotNumber() {
         Object[] vehicles = {new Object(), new Object(), new Object()};
         Arrays.stream(vehicles).forEachOrdered(vehicle -> parkingLotService.parkTheVehicle(vehicle));
-        Assert.assertEquals(2, parkingLotService.getSlotOfParkedVehicle(vehicles[1]));
+        Assert.assertEquals(12, parkingLotService.getSlotOfParkedVehicle(vehicles[1]));
     }
 
     @Test
@@ -116,9 +116,9 @@ public class ParkingLotTest {
     public void givenVehicleToPark_WhenParkedAndQueriedForTimeOfParking_ShouldReturnCurrentTime() {
         Object vehicle = new Object();
         parkingLotService.parkTheVehicle(vehicle);
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm");
         LocalDateTime now = LocalDateTime.now();
-        Assert.assertEquals(dtf.format(now), parkingLotService.getTimeOfParkingForVehicle(vehicle));
+        Assert.assertEquals(dateTimeFormatter.format(now), parkingLotService.getTimeOfParkingForVehicle(vehicle));
     }
 
     @Test
@@ -128,5 +128,13 @@ public class ParkingLotTest {
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT, exception.exceptionType);
         }
+    }
+
+    @Test
+    public void givenMultipleParkingLotsAndVehicles_WhenParked_ShouldDistributeThemEvenly() {
+        ParkingLotService lotService = new ParkingLotService(3, 3);
+        Object[] vehicles = {new Object(), new Object(), new Object(), new Object()};
+        Arrays.stream(vehicles).forEachOrdered(vehicle -> lotService.parkTheVehicle(vehicle));
+        Assert.assertEquals(12, lotService.getSlotOfParkedVehicle(vehicles[3]));
     }
 }

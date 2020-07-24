@@ -3,15 +3,20 @@ package parkinglot.observers;
 import parkinglot.service.IAuthority;
 
 public class Owner implements IAuthority {
-    private boolean capacityStatus;
+    private boolean parkingLotFull;
 
     @Override
-    public void fullCapacityReached(boolean status) {
-        this.capacityStatus = status;
+    public void fullCapacityReached() {
+        this.parkingLotFull = true;
     }
 
     @Override
     public boolean getParkingLotStatus() {
-        return capacityStatus;
+        return parkingLotFull;
+    }
+
+    @Override
+    public void spaceAvailableForParking() {
+        parkingLotFull = false ;
     }
 }
