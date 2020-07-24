@@ -1,19 +1,19 @@
 package parkinglot.model;
 
 public class Slot {
-    private Object vehicle;
-    private String currentDateTime;
+    private final Vehicle vehicle;
+    private final String currentDateTime;
 
-    public Slot(Object vehicle, String currentDateTime) {
+    public Slot(Vehicle vehicle, String currentDateTime) {
         this.vehicle = vehicle;
         this.currentDateTime = currentDateTime;
     }
 
-    public Object getVehicle() {
-        return vehicle;
+    public Vehicle getVehicle() {
+        return this.vehicle;
     }
 
     public String getCurrentDateTime() {
-        return currentDateTime;
+        return this.currentDateTime;
     }
 }

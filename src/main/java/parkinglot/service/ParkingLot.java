@@ -2,6 +2,7 @@ package parkinglot.service;
 
 
 import parkinglot.model.Slot;
+import parkinglot.model.Vehicle;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +25,7 @@ public class ParkingLot {
                 .findFirst().orElse(this.parkingLotSize);
     }
 
-    public String getTimeOfParking(Object vehicle) {
+    public String getTimeOfParking(Vehicle vehicle) {
         for (Slot slot : parkedCars) {
             if (slot != null && slot.getVehicle() == vehicle)
                 return slot.getCurrentDateTime();
@@ -32,7 +33,7 @@ public class ParkingLot {
         return null;
     }
 
-    public int getSlotOfVehicleParked(Object vehicle) {
+    public int getSlotOfVehicleParked(Vehicle vehicle) {
         int slotNumber = 0;
         for (Slot slot : parkedCars) {
             if (slot != null && slot.getVehicle() == vehicle) {
@@ -41,4 +42,5 @@ public class ParkingLot {
         }
         return slotNumber;
     }
+
 }
