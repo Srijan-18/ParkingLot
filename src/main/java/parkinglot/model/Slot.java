@@ -1,4 +1,4 @@
-package parkinglot.service;
+package parkinglot.model;
 
 public class Slot {
     private Object vehicle;

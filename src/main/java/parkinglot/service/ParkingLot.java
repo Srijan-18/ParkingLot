@@ -1,6 +1,8 @@
 package parkinglot.service;
 
 
+import parkinglot.model.Slot;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +23,6 @@ public class ParkingLot {
                 .filter(slot -> parkedCars.get(slot) == null)
                 .findFirst().orElse(this.parkingLotSize);
     }
-
 
     public String getTimeOfParking(Object vehicle) {
         for (Slot slot : parkedCars) {

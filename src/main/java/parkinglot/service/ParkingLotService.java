@@ -1,6 +1,7 @@
 package parkinglot.service;
 
 import parkinglot.exception.ParkingLotServiceException;
+import parkinglot.model.Slot;
 import parkinglot.utility.ParkingUtility;
 
 import java.util.ArrayList;
@@ -10,26 +11,21 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class ParkingLotService {
-    private final int LOT_FACTOR;
     private static final int INDEX_FACTOR = 1;
     private final int numberOfLots;
     private List<ParkingLot> parkingLots;
     private final int parkingLotSize;
     private List<IAuthority> observerList;
 
-    public ParkingLotService(int parkingLotSize, int numberOfLots) {
+    public ParkingLotService(int singleParkingLotSize, int numberOfLots) {
         this.numberOfLots = numberOfLots;
         this.parkingLots = new ArrayList<>();
         IntStream.range(0, numberOfLots)
-                .forEachOrdered(index -> parkingLots.add(index, new ParkingLot(parkingLotSize)));
-        this.parkingLotSize = parkingLotSize;
+                .forEachOrdered(index -> parkingLots.add(index, new ParkingLot(singleParkingLotSize)));
+        this.parkingLotSize = singleParkingLotSize;
         observerList = new ArrayList<>();
-        LOT_FACTOR = this.initialiseLotFactor(parkingLotSize);
     }
 
-    private int initialiseLotFactor(int parkingLotSize) {
-        return (int) Math.pow(10, String.valueOf(parkingLotSize).length());
-    }
 
     public void parkTheVehicle(Object vehicle) {
         if (this.checkParkingLotStatus())
@@ -50,7 +46,6 @@ public class ParkingLotService {
                 .filter(parkingLot -> parkingLot.parkedCars.stream()
                         .anyMatch(slot -> slot != null && slot.getVehicle() == vehicle)).isPresent();
     }
-
 
     public void unParkTheVehicle(Object vehicle) {
         ParkingLot lotOfVehicle = this.getLotOfParkedVehicle(vehicle);
@@ -87,11 +82,10 @@ public class ParkingLotService {
                 .findFirst().orElse(-1);
     }
 
-    public int getSlotOfParkedVehicle(Object vehicle) {
+    public String getSlotOfParkedVehicle(Object vehicle) {
        ParkingLot parkingLot = this.getLotOfParkedVehicle(vehicle);
        int slotNumberInItsLot =  parkingLot.getSlotOfVehicleParked(vehicle);
-        return (((parkingLots.indexOf(parkingLot) + INDEX_FACTOR)
-                * LOT_FACTOR) + slotNumberInItsLot + INDEX_FACTOR);
+        return "P:" + (parkingLots.indexOf(parkingLot) + INDEX_FACTOR) + " S:" + (slotNumberInItsLot + INDEX_FACTOR);
     }
 
     private ParkingLot getLotOfParkedVehicle(Object vehicle) {
