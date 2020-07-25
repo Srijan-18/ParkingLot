@@ -11,17 +11,15 @@ import java.util.stream.IntStream;
 
 public class ParkingLot {
     public List<Slot> parkedCars;
-    private int parkingLotSize;
 
     public ParkingLot(int parkingLotSize) {
-        this.parkingLotSize = parkingLotSize;
         parkedCars = new ArrayList<>(Collections.nCopies(parkingLotSize, null));
     }
 
     public int getNumberOfVehiclesParked() {
-        return IntStream.range(0, this.parkingLotSize)
-                .filter(slot -> parkedCars.get(slot) == null)
-                .findFirst().orElse(this.parkingLotSize);
+        return (int) IntStream.range(0, parkedCars.size())
+                              .filter(slot -> parkedCars.get(slot) != null)
+                              .count();
     }
 
     public String getTimeOfParking(Vehicle vehicle) {
@@ -42,4 +40,15 @@ public class ParkingLot {
         return slotNumber;
     }
 
+    public int getIndexOfSlotWithConsecutiveEmptySlot() {
+        return IntStream.range(0, parkedCars.size() - 1)
+                        .filter(index -> parkedCars.get(index) == null
+                                         && parkedCars.get(index + 1) == null)
+                        .findFirst().orElse(0);
+    }
+
+    public boolean IsAnySlotForLargeVehicleAvailable() {
+        return IntStream.range(0, parkedCars.size() - 1)
+                .anyMatch(index -> parkedCars.get(index) == null && parkedCars.get(index + 1) == null);
+    }
 }

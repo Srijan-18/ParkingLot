@@ -3,6 +3,7 @@ package parkinglot.service;
 import parkinglot.exception.ParkingLotServiceException;
 import parkinglot.model.Slot;
 import parkinglot.model.Vehicle;
+import parkinglot.utility.ParkingLotAllotment;
 import parkinglot.utility.ParkingUtility;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class ParkingLotService {
     private List<ParkingLot> parkingLots;
     private final int parkingLotSize;
     private List<IAuthority> observerList;
+    private ParkingLotAllotment parkingLotAllotment;
 
     public ParkingLotService(int singleParkingLotSize, int numberOfLots) {
         this.numberOfLots = numberOfLots;
@@ -23,17 +25,21 @@ public class ParkingLotService {
                 .forEachOrdered(index -> parkingLots.add(index, new ParkingLot(singleParkingLotSize)));
         this.parkingLotSize = singleParkingLotSize;
         observerList = new ArrayList<>();
+        parkingLotAllotment = new ParkingLotAllotment(singleParkingLotSize);
     }
 
     public void parkTheVehicle(Vehicle vehicle) {
         if (this.checkParkingLotStatus())
             throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.PARKING_FULL,
-                    "NO MORE SPACE TO PARK ");
+                    "NO MORE SPACE TO PARK.");
         if (isVehiclePresent(vehicle))
             throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.VEHICLE_ALREADY_PARKED,
                     "GIVEN VEHICLE IS ALREADY PRESENT IN PARKING LOT.");
-        ParkingLot parkingLotToPark = this.getTheLotToPark(parkingLots, vehicle);
-        int slotToPark = this.getParkingSlotToPark(parkingLotToPark);
+        ParkingLot parkingLotToPark = parkingLotAllotment.getTheLotToPark(parkingLots, vehicle);
+        if (parkingLotToPark == null)
+            throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.NO_SPACE_FOR_LARGE_VEHICLE,
+                    "NO MORE SPACE TO PARK.");
+        int slotToPark = this.getParkingSlotToPark(parkingLotToPark, vehicle);
         parkingLotToPark.parkedCars.set(slotToPark, new Slot(vehicle, new ParkingUtility().getCurrentDateTime()));
         if (checkParkingLotStatus())
             this.notifyObserversOfFullParkingLot();
@@ -74,15 +80,17 @@ public class ParkingLotService {
         }
     }
 
-    private int getParkingSlotToPark(ParkingLot parkingLot) {
+    private int getParkingSlotToPark(ParkingLot parkingLot, Vehicle vehicle) {
+        if (vehicle.vehicleCategory.equals(Vehicle.VehicleCategory.LARGE))
+            return parkingLot.getIndexOfSlotWithConsecutiveEmptySlot();
         return IntStream.range(0, parkingLot.parkedCars.size())
                 .filter(index -> parkingLot.parkedCars.get(index) == null)
                 .findFirst().orElse(-1);
     }
 
     public String getSlotOfParkedVehicle(Vehicle vehicle) {
-       ParkingLot parkingLot = this.getLotOfParkedVehicle(vehicle);
-       int slotNumberInItsLot =  parkingLot.getSlotOfVehicleParked(vehicle);
+        ParkingLot parkingLot = this.getLotOfParkedVehicle(vehicle);
+        int slotNumberInItsLot = parkingLot.getSlotOfVehicleParked(vehicle);
         return "P:" + (parkingLots.indexOf(parkingLot) + INDEX_FACTOR) + " S:" + (slotNumberInItsLot + INDEX_FACTOR);
     }
 
@@ -103,21 +111,5 @@ public class ParkingLotService {
                 return parkingLot.getTimeOfParking(vehicle);
         throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT,
                 "VEHICLE NOT PRESENT IN PARKING LOT.");
-    }
-
-    private ParkingLot getTheLotToPark(List<ParkingLot> parkingLots, Vehicle vehicle) {
-        if(vehicle.driverCategory.equals(Vehicle.DriverCategory.HANDICAPPED))
-            for (ParkingLot parkingLot : parkingLots) {
-                if (parkingLot.getNumberOfVehiclesParked() < this.parkingLotSize)
-                    return parkingLot;
-            }
-        int minimumIndex = 0;
-        int minimumSize = parkingLots.get(0).getNumberOfVehiclesParked();
-        for (int index = 0; index< parkingLots.size(); index++)
-            if (parkingLots.get(index).getNumberOfVehiclesParked() < minimumSize) {
-                minimumIndex = index;
-                minimumSize = parkingLots.get(index).getNumberOfVehiclesParked();
-            }
-        return parkingLots.get(minimumIndex);
     }
 }

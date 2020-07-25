@@ -6,9 +6,15 @@ public class Vehicle {
         HANDICAPPED, NORMAL
     }
 
-    public DriverCategory driverCategory;
+    public enum VehicleCategory {
+        LARGE, NORMAL;
+    }
 
-    public Vehicle(DriverCategory driverCategory) {
+    public DriverCategory driverCategory;
+    public VehicleCategory vehicleCategory;
+
+    public Vehicle(DriverCategory driverCategory, VehicleCategory vehicleCategory) {
         this.driverCategory = driverCategory;
+        this.vehicleCategory = vehicleCategory;
     }
 }
