@@ -117,13 +117,13 @@ public class ParkingLotService {
         String[] whiteColouredCars = new String[this.parkingLotSize];
         int count = 0;
         for (ParkingLot parkingLot : parkingLots)
-            for (Slot slot: parkingLot.parkedCars) {
-                if (slot!=null && slot.getVehicle().vehicleColour.equals(Vehicle.VehicleColour.WHITE))
+            for (Slot slot : parkingLot.parkedCars) {
+                if (slot != null && slot.getVehicle().vehicleColour.equals(Vehicle.VehicleColour.WHITE))
                     whiteColouredCars[count++] = this.getSlotOfParkedVehicle(slot.getVehicle());
             }
-        if(count == 0)
+        if (count == 0)
             throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.NO_SUCH_VEHICLE_PRESENT,
-                                                "NO WHITE CARS");
+                    "NO WHITE CARS");
         return whiteColouredCars;
     }
 }

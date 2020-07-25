@@ -16,7 +16,7 @@ public class ParkingLotAllotment {
         ParkingLot availableParkingLot = null;
         switch (vehicle.vehicleCategory) {
             case LARGE:
-                availableParkingLot  = getLotForLargeVehicle(vehicle, parkingLots);
+                availableParkingLot = getLotForLargeVehicle(vehicle, parkingLots);
                 break;
             case NORMAL:
                 if (vehicle.driverCategory.equals(Vehicle.DriverCategory.HANDICAPPED))
@@ -54,6 +54,6 @@ public class ParkingLotAllotment {
             }
         if (minimumIndex != -1)
             availableParkingLot = parkingLots.get(minimumIndex);
-        return   availableParkingLot;
+        return availableParkingLot;
     }
 }

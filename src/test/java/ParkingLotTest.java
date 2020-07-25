@@ -1,4 +1,3 @@
-import jdk.swing.interop.SwingInterOpUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,7 +7,6 @@ import parkinglot.observers.AirportSecurity;
 import parkinglot.observers.Owner;
 import parkinglot.service.ParkingLotService;
 
-import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -210,7 +208,7 @@ public class ParkingLotTest {
         Vehicle[] vehicles = new Vehicle[5];
         IntStream.range(0, 4).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.HANDICAPPED,
                 Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED));
-        vehicles [4] = new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleCategory.NORMAL,
+        vehicles[4] = new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleCategory.NORMAL,
                 Vehicle.VehicleColour.NOT_SPECIFIED);
         Arrays.stream(vehicles).forEachOrdered(parkingLotService::parkTheVehicle);
         Assert.assertEquals("P:3 S:1", parkingLotService.getSlotOfParkedVehicle(vehicles[4]));
@@ -226,7 +224,7 @@ public class ParkingLotTest {
             IntStream.range(0, 3).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.NO_SPACE_FOR_LARGE_VEHICLE,
-                                exception.exceptionType);
+                    exception.exceptionType);
         }
     }
 
@@ -261,7 +259,7 @@ public class ParkingLotTest {
                 Vehicle.VehicleCategory.LARGE, Vehicle.VehicleColour.NOT_SPECIFIED);
         parkingLotService.parkTheVehicle(largeVehicleWithHandicappedDriver);
         Assert.assertEquals("P:2 S:2", parkingLotService
-                                                .getSlotOfParkedVehicle(largeVehicleWithHandicappedDriver));
+                .getSlotOfParkedVehicle(largeVehicleWithHandicappedDriver));
     }
 
     @Test
@@ -270,7 +268,7 @@ public class ParkingLotTest {
         Vehicle[] vehicles = new Vehicle[4];
         vehicles[0] = new Vehicle(Vehicle.DriverCategory.NORMAL,
                 Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED);
-        IntStream.range(1,3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
+        IntStream.range(1, 3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
                 Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE));
         vehicles[3] = new Vehicle(Vehicle.DriverCategory.HANDICAPPED,
                 Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE);
@@ -290,7 +288,7 @@ public class ParkingLotTest {
             parkingLotService.getLocationsOfWhiteCars();
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.NO_SUCH_VEHICLE_PRESENT,
-                                exception.exceptionType);
+                    exception.exceptionType);
         }
     }
 }

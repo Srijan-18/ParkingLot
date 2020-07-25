@@ -17,6 +17,7 @@ public class Vehicle {
     public DriverCategory driverCategory;
     public VehicleCategory vehicleCategory;
     public VehicleColour vehicleColour;
+
     public Vehicle(DriverCategory driverCategory, VehicleCategory vehicleCategory, VehicleColour vehicleColour) {
         this.driverCategory = driverCategory;
         this.vehicleCategory = vehicleCategory;
