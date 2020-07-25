@@ -10,11 +10,16 @@ public class Vehicle {
         LARGE, NORMAL;
     }
 
+    public enum VehicleColour {
+        WHITE, NOT_SPECIFIED;
+    }
+
     public DriverCategory driverCategory;
     public VehicleCategory vehicleCategory;
-
-    public Vehicle(DriverCategory driverCategory, VehicleCategory vehicleCategory) {
+    public VehicleColour vehicleColour;
+    public Vehicle(DriverCategory driverCategory, VehicleCategory vehicleCategory, VehicleColour vehicleColour) {
         this.driverCategory = driverCategory;
         this.vehicleCategory = vehicleCategory;
+        this.vehicleColour = vehicleColour;
     }
 }

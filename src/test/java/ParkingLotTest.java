@@ -1,3 +1,4 @@
+import jdk.swing.interop.SwingInterOpUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,6 +8,7 @@ import parkinglot.observers.AirportSecurity;
 import parkinglot.observers.Owner;
 import parkinglot.service.ParkingLotService;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -260,5 +262,35 @@ public class ParkingLotTest {
         parkingLotService.parkTheVehicle(largeVehicleWithHandicappedDriver);
         Assert.assertEquals("P:2 S:2", parkingLotService
                                                 .getSlotOfParkedVehicle(largeVehicleWithHandicappedDriver));
+    }
+
+    @Test
+    public void givenParkedVehicles_WhenQueriedForLocationOfWhiteVehicles_ShouldReturnTheirLocations() {
+        ParkingLotService parkingLotService = new ParkingLotService(3, 2);
+        Vehicle[] vehicles = new Vehicle[4];
+        vehicles[0] = new Vehicle(Vehicle.DriverCategory.NORMAL,
+                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED);
+        IntStream.range(1,3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
+                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE));
+        vehicles[3] = new Vehicle(Vehicle.DriverCategory.HANDICAPPED,
+                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE);
+        IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
+        String[] locationsOfWhiteCars = parkingLotService.getLocationsOfWhiteCars();
+        Assert.assertEquals("P:1 S:3", locationsOfWhiteCars[1]);
+    }
+
+    @Test
+    public void givenParkedVehicles_WhenNoWhiteCarParkedAndQueriedForWhiteCarsLocations_ShouldThrowAnException() {
+        ParkingLotService parkingLotService = new ParkingLotService(3, 2);
+        Vehicle[] vehicles = new Vehicle[6];
+        IntStream.range(0, 6).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
+                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED));
+        IntStream.range(0, 6).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
+        try {
+            parkingLotService.getLocationsOfWhiteCars();
+        } catch (ParkingLotServiceException exception) {
+            Assert.assertEquals(ParkingLotServiceException.ExceptionType.NO_SUCH_VEHICLE_PRESENT,
+                                exception.exceptionType);
+        }
     }
 }
