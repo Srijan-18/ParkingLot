@@ -6,6 +6,8 @@ import parkinglot.model.Vehicle;
 import parkinglot.utility.ParkingUtility;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -111,13 +113,8 @@ public class ParkingLotService {
                 if (parkingLot.getNumberOfVehiclesParked() < this.parkingLotSize)
                     return parkingLot;
             }
-        int minimumIndex = 0;
-        int minimumSize = parkingLots.get(0).getNumberOfVehiclesParked();
-        for (int index = 0; index< parkingLots.size(); index++)
-            if (parkingLots.get(index).getNumberOfVehiclesParked() < minimumSize) {
-                minimumIndex = index;
-                minimumSize = parkingLots.get(index).getNumberOfVehiclesParked();
-            }
-        return parkingLots.get(minimumIndex);
+        List<ParkingLot> tempList = new ArrayList<>(parkingLots);
+        Collections.sort(tempList, Comparator.comparing(ParkingLot::getNumberOfVehiclesParked));
+        return tempList.get(0);
     }
 }
