@@ -3,7 +3,11 @@ package parkinglot.utility;
 import parkinglot.model.Vehicle;
 import parkinglot.service.ParkingLot;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ParkingLotAllotment {
     private final int parkingLotSize;
@@ -24,14 +28,9 @@ public class ParkingLotAllotment {
                         if (parkingLot.getNumberOfVehiclesParked() < this.parkingLotSize)
                             return parkingLot;
                     }
-                int minimumIndex = 0;
-                int minimumSize = parkingLots.get(0).getNumberOfVehiclesParked();
-                for (int index = 0; index < parkingLots.size(); index++)
-                    if (parkingLots.get(index).getNumberOfVehiclesParked() < minimumSize) {
-                        minimumIndex = index;
-                        minimumSize = parkingLots.get(index).getNumberOfVehiclesParked();
-                    }
-                availableParkingLot = parkingLots.get(minimumIndex);
+                List<ParkingLot> temporaryParkingLotsList = new ArrayList<>(parkingLots);
+                temporaryParkingLotsList.sort(Comparator.comparing(ParkingLot::getNumberOfVehiclesParked));
+                availableParkingLot = temporaryParkingLotsList.get(0);
         }
         return availableParkingLot;
     }
@@ -44,16 +43,13 @@ public class ParkingLotAllotment {
                         && parkingLot.IsAnySlotForLargeVehicleAvailable())
                     return parkingLot;
             }
-        int minimumIndex = -1;
-        int minimumOccupancyCount = parkingLots.get(0).getNumberOfVehiclesParked();
-        for (int index = 0; index < parkingLots.size(); index++)
-            if (parkingLots.get(index).getNumberOfVehiclesParked() < minimumOccupancyCount
-                    && parkingLots.get(index).IsAnySlotForLargeVehicleAvailable()) {
-                minimumIndex = index;
-                minimumOccupancyCount = parkingLots.get(index).getNumberOfVehiclesParked();
-            }
-        if (minimumIndex != -1)
-            availableParkingLot = parkingLots.get(minimumIndex);
+        List<ParkingLot> temporaryList = IntStream.range(0, parkingLots.size())
+                .filter(index -> parkingLots.get(index).IsAnySlotForLargeVehicleAvailable())
+                .mapToObj(parkingLots::get).collect(Collectors.toList());
+        if (temporaryList.size() > 0) {
+            temporaryList.sort(Comparator.comparing(ParkingLot::getNumberOfVehiclesParked));
+            availableParkingLot = temporaryList.get(0);
+        }
         return availableParkingLot;
     }
 }

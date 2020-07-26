@@ -17,7 +17,7 @@ public class ParkingLotService {
     private final int parkingLotSize;
     private final List<IAuthority> observerList;
     private final ParkingLotAllotment parkingLotAllotment;
-    private ParkingAttendant parkingAttendant;
+    private final ParkingAttendant parkingAttendant;
 
     public ParkingLotService(int singleParkingLotSize, int numberOfLots) {
         this.numberOfLots = numberOfLots;
