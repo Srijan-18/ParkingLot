@@ -10,45 +10,49 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class ParkingLot {
-    public List<Slot> parkedCars;
+    private List<Slot> allSlots;
 
     public ParkingLot(int parkingLotSize) {
-        parkedCars = new ArrayList<>(Collections.nCopies(parkingLotSize, null));
+        allSlots = new ArrayList<>(Collections.nCopies(parkingLotSize, null));
+    }
+
+    public List<Slot> getAllSlots() {
+        return allSlots;
     }
 
     public int getNumberOfVehiclesParked() {
-        return (int) IntStream.range(0, parkedCars.size())
-                .filter(slot -> parkedCars.get(slot) != null)
+        return (int) IntStream.range(0, allSlots.size())
+                .filter(slot -> allSlots.get(slot) != null)
                 .count();
     }
 
     public String getTimeOfParking(Vehicle vehicle) {
-        for (Slot slot : parkedCars) {
-            if (slot != null && slot.getVehicle() == vehicle)
-                return slot.getCurrentDateTime();
+        for (Slot slot : allSlots) {
+            if (slot != null && slot.getVehicle().equals(vehicle))
+                return slot.getVehicleParkingDateTime();
         }
         return null;
     }
 
     public int getSlotOfVehicleParked(Vehicle vehicle) {
         int slotNumber = 0;
-        for (Slot slot : parkedCars) {
-            if (slot != null && slot.getVehicle() == vehicle) {
-                slotNumber = parkedCars.indexOf(slot);
+        for (Slot slot : allSlots) {
+            if (slot != null && slot.getVehicle().equals(vehicle)) {
+                slotNumber = allSlots.indexOf(slot);
             }
         }
         return slotNumber;
     }
 
     public int getIndexOfSlotWithConsecutiveEmptySlot() {
-        return IntStream.range(0, parkedCars.size() - 1)
-                .filter(index -> parkedCars.get(index) == null
-                        && parkedCars.get(index + 1) == null)
+        return IntStream.range(0, allSlots.size() - 1)
+                .filter(index -> allSlots.get(index) == null
+                        && allSlots.get(index + 1) == null)
                 .findFirst().orElse(0);
     }
 
     public boolean IsAnySlotForLargeVehicleAvailable() {
-        return IntStream.range(0, parkedCars.size() - 1)
-                .anyMatch(index -> parkedCars.get(index) == null && parkedCars.get(index + 1) == null);
+        return IntStream.range(0, allSlots.size() - 1)
+                .anyMatch(index -> allSlots.get(index) == null && allSlots.get(index + 1) == null);
     }
 }
