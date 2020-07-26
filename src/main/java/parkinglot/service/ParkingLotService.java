@@ -117,7 +117,7 @@ public class ParkingLotService {
                 "VEHICLE NOT PRESENT IN PARKING LOT.");
     }
 
-    public String[] getLocationOfCarsOfParticularColour(Vehicle.VehicleColour vehicleColour) {
+    public String[] getLocationOfVehiclesOfParticularColour(Vehicle.VehicleColour vehicleColour) {
         List<Slot> givenColouredVehicles = new ArrayList<>();
         for (ParkingLot parkingLot : parkingLots)
             givenColouredVehicles.addAll(IntStream.range(0, parkingLot.getAllSlots().size())
@@ -138,7 +138,7 @@ public class ParkingLotService {
         parkingAttendant.addParkingAttendant(attendantName);
     }
 
-    public List<Slot> getDetailsOfBlueToyotaCarsParked() {
+    public List<Slot> getDetailsOfBlueToyotaVehiclesParked() {
         List<Slot> givenColouredVehicles = new ArrayList<>();
         for (ParkingLot parkingLot : parkingLots)
             givenColouredVehicles.addAll(IntStream.range(0, parkingLot.getAllSlots().size())

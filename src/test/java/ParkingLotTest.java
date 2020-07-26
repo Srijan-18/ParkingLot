@@ -300,12 +300,13 @@ public class ParkingLotTest {
                 Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
                 "UP-51-KK-1111");
         IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
-        String[] locationsOfWhiteCars = parkingLotService.getLocationOfCarsOfParticularColour(Vehicle.VehicleColour.WHITE);
-        Assert.assertEquals("Parking Lot:1 Slot:3", locationsOfWhiteCars[1]);
+        String[] locationsOfWhiteVehicles = parkingLotService.getLocationOfVehiclesOfParticularColour
+                (Vehicle.VehicleColour.WHITE);
+        Assert.assertEquals("Parking Lot:1 Slot:3", locationsOfWhiteVehicles[1]);
     }
 
     @Test
-    public void givenParkedVehicles_WhenNoWhiteCarParkedAndQueriedForWhiteCarsLocations_ShouldThrowAnException() {
+    public void givenParkedVehicles_WhenNoWhiteVehicleParkedAndQueriedForWhiteVehiclesLocations_ShouldThrowAnException() {
         ParkingLotService parkingLotService = new ParkingLotService(3, 2);
         Vehicle[] vehicles = new Vehicle[6];
         IntStream.range(0, 6).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
@@ -313,7 +314,7 @@ public class ParkingLotTest {
                 Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-"+ (index + 1) +"-KK-1111"));
         IntStream.range(0, 6).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
         try {
-            parkingLotService.getLocationOfCarsOfParticularColour(Vehicle.VehicleColour.WHITE);
+            parkingLotService.getLocationOfVehiclesOfParticularColour(Vehicle.VehicleColour.WHITE);
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.NO_SUCH_VEHICLE_PRESENT,
                     exception.exceptionType);
@@ -321,7 +322,7 @@ public class ParkingLotTest {
     }
 
     @Test
-    public void givenParkedVehicles_WhenQueriedAboutBlueToyotaCars_ShouldReturnTheirDetails() {
+    public void givenParkedVehicles_WhenQueriedAboutBlueToyotaVehicles_ShouldReturnTheirDetails() {
         ParkingLotService parkingLotService = new ParkingLotService(2, 2);
         String[] attendantNames = {"Attendant1", "Attendant2", "Attendant3", "Attendant4"};
         IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.addParkingAttendant(attendantNames[index]));
@@ -333,13 +334,13 @@ public class ParkingLotTest {
                 Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.BLUE, Vehicle.VehicleCompany.TOYOTA,
                 "UP-"+ 4 +"-KK-1111");
         IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
-        List<Slot> detailsOfBlueToyotaCars = parkingLotService.getDetailsOfBlueToyotaCarsParked();
-        Assert.assertEquals(Vehicle.VehicleCompany.TOYOTA, detailsOfBlueToyotaCars.get(0).getVehicle().vehicleCompany);
-        Assert.assertEquals(Vehicle.VehicleColour.BLUE, detailsOfBlueToyotaCars.get(0).getVehicle().vehicleColour);
+        List<Slot> detailsOfBlueToyotaVehicles = parkingLotService.getDetailsOfBlueToyotaVehiclesParked();
+        Assert.assertEquals(Vehicle.VehicleCompany.TOYOTA, detailsOfBlueToyotaVehicles.get(0).getVehicle().vehicleCompany);
+        Assert.assertEquals(Vehicle.VehicleColour.BLUE, detailsOfBlueToyotaVehicles.get(0).getVehicle().vehicleColour);
     }
 
     @Test
-    public void givenParkedVehicles_WhenQueriedAboutBlueToyotaCarParkedByDriver_ShouldReturnDriverAsAttendantName() {
+    public void givenParkedVehicles_WhenQueriedAboutBlueToyotaVehicleParkedByDriver_ShouldReturnDriverAsAttendantName() {
         ParkingLotService parkingLotService = new ParkingLotService(2, 2);
         Vehicle[] vehicles = new Vehicle[4];
         IntStream.range(0, 3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
@@ -349,12 +350,12 @@ public class ParkingLotTest {
                 Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.BLUE, Vehicle.VehicleCompany.TOYOTA,
                 "UP-"+ 4 +"-KK-1111");
         IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
-        List<Slot> detailsOfBlueToyotaCars = parkingLotService.getDetailsOfBlueToyotaCarsParked();
-        Assert.assertEquals("Driver Of Vehicle", detailsOfBlueToyotaCars.get(0).getAttendantName());
+        List<Slot> detailsOfBlueToyotaVehicles = parkingLotService.getDetailsOfBlueToyotaVehiclesParked();
+        Assert.assertEquals("Driver Of Vehicle", detailsOfBlueToyotaVehicles.get(0).getAttendantName());
     }
 
     @Test
-    public void givenParkedVehiclesAndQueriedAboutBlueToyotaCarParked_WhenNotPresent_ShouldThrowAnException() {
+    public void givenParkedVehiclesAndQueriedAboutBlueToyotaVehicleParked_WhenNotPresent_ShouldThrowAnException() {
         try {
             ParkingLotService parkingLotService = new ParkingLotService(2, 2);
             String[] attendantNames = {"Attendant1", "Attendant2", "Attendant3", "Attendant4"};
@@ -364,7 +365,7 @@ public class ParkingLotTest {
                     Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
                     "UP-" + (index + 1) + "-KK-1111"));
             IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
-            parkingLotService.getDetailsOfBlueToyotaCarsParked();
+            parkingLotService.getDetailsOfBlueToyotaVehiclesParked();
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.NO_SUCH_VEHICLE_PRESENT,
                     exception.exceptionType);
