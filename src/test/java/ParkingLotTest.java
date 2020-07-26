@@ -231,11 +231,11 @@ public class ParkingLotTest {
         IntStream.rangeClosed(3, 5).forEachOrdered(index -> parkingLotService.unParkTheVehicle(vehicles[index]));
         IntStream.rangeClosed(7, 9).forEachOrdered(index -> parkingLotService.unParkTheVehicle(vehicles[index]));
         parkingLotService.unParkTheVehicle(vehicles[11]);
-        Vehicle largeVehicleWithHandicappedDriver = new Vehicle(Vehicle.DriverCategory.NORMAL,
+        Vehicle largeVehicleWithNormalDriver = new Vehicle(Vehicle.DriverCategory.NORMAL,
                                                                 Vehicle.VehicleCategory.LARGE);
-        parkingLotService.parkTheVehicle(largeVehicleWithHandicappedDriver);
+        parkingLotService.parkTheVehicle(largeVehicleWithNormalDriver);
         Assert.assertEquals("P:3 S:2", parkingLotService
-                .getSlotOfParkedVehicle(largeVehicleWithHandicappedDriver));
+                .getSlotOfParkedVehicle(largeVehicleWithNormalDriver));
     }
 
     @Test
