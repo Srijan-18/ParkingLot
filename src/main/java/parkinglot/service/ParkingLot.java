@@ -1,6 +1,7 @@
 package parkinglot.service;
 
 
+import parkinglot.exception.ParkingLotServiceException;
 import parkinglot.model.Slot;
 import parkinglot.model.Vehicle;
 
@@ -35,13 +36,11 @@ public class ParkingLot {
     }
 
     public int getSlotOfVehicleParked(Vehicle vehicle) {
-        int slotNumber = 0;
-        for (Slot slot : allSlots) {
-            if (slot != null && slot.getVehicle().equals(vehicle)) {
-                slotNumber = allSlots.indexOf(slot);
-            }
-        }
-        return slotNumber;
+        return allSlots.stream().filter(slot -> slot != null && slot.getVehicle().equals(vehicle)).findFirst()
+                .map(slot -> allSlots.indexOf(slot))
+                .orElseThrow(()-> new ParkingLotServiceException
+                                    (ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT,
+                                     vehicle.plateNumber + " IS NOT PRESENT"));
     }
 
     public int getIndexOfSlotWithConsecutiveEmptySlot() {

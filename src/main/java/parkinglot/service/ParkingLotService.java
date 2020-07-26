@@ -8,6 +8,7 @@ import parkinglot.utility.ParkingUtility;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ParkingLotService {
@@ -99,11 +100,11 @@ public class ParkingLotService {
 
     private ParkingLot getLotOfParkedVehicle(Vehicle vehicle) {
         for (ParkingLot parkingLot : parkingLots)
-            for (Slot slot : parkingLot.getAllSlots()) {
-                if (slot != null && slot.getVehicle().equals(vehicle)) {
+           if((IntStream.range(0, parkingLot.getAllSlots().size())
+                   .filter(index -> parkingLot.getAllSlots().get(index) != null
+                           && parkingLot.getAllSlots().get(index).getVehicle().equals(vehicle))
+                   .findAny()).isPresent())
                     return parkingLot;
-                }
-            }
         throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT,
                 "VEHICLE NOT PRESENT");
     }
@@ -117,35 +118,39 @@ public class ParkingLotService {
     }
 
     public String[] getLocationOfCarsOfParticularColour(Vehicle.VehicleColour vehicleColour) {
-        String[] whiteColouredCars = new String[this.parkingLotSize];
-        int count = 0;
+        List<Slot> givenColouredVehicles = new ArrayList<>();
         for (ParkingLot parkingLot : parkingLots)
-            for (Slot slot : parkingLot.getAllSlots()) {
-                if (slot != null && slot.getVehicle().vehicleColour.equals(vehicleColour))
-                    whiteColouredCars[count++] = this.getSlotOfParkedVehicle(slot.getVehicle());
-            }
-        if (count == 0)
+            givenColouredVehicles.addAll(IntStream.range(0, parkingLot.getAllSlots().size())
+                    .filter(index -> parkingLot.getAllSlots().get(index) != null
+                            && parkingLot.getAllSlots().get(index).getVehicle().vehicleColour.equals(vehicleColour))
+                    .mapToObj(parkingLot.getAllSlots()::get).collect(Collectors.toList()));
+        if (givenColouredVehicles.size() == 0)
             throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.NO_SUCH_VEHICLE_PRESENT,
                     "NO WHITE CARS");
-        return whiteColouredCars;
+        String[] givenColouredVehicleSlotNumbers = new String[givenColouredVehicles.size()];
+        IntStream.range(0, givenColouredVehicles.size()-1)
+                .forEachOrdered(index -> givenColouredVehicleSlotNumbers[index] = this.getSlotOfParkedVehicle
+                                                                       (givenColouredVehicles.get(index).getVehicle()));
+        return givenColouredVehicleSlotNumbers;
     }
 
     public void addParkingAttendant(String attendantName) {
         parkingAttendant.addParkingAttendant(attendantName);
     }
 
-    public Slot[] getDetailsOfBlueToyotaCarsParked() {
-        Slot[] slotsOfBlueToyotaCars = new Slot[this.parkingLotSize];
-        int count = 0;
+    public List<Slot> getDetailsOfBlueToyotaCarsParked() {
+        List<Slot> givenColouredVehicles = new ArrayList<>();
         for (ParkingLot parkingLot : parkingLots)
-            for (Slot slot : parkingLot.getAllSlots()) {
-                if (slot != null && slot.getVehicle().vehicleColour.equals(Vehicle.VehicleColour.BLUE)
-                        && slot.getVehicle().vehicleCompany.equals(Vehicle.VehicleCompany.TOYOTA))
-                    slotsOfBlueToyotaCars[count++] = slot;
-            }
-        if (count == 0)
+            givenColouredVehicles.addAll(IntStream.range(0, parkingLot.getAllSlots().size())
+                    .filter(index -> parkingLot.getAllSlots().get(index) != null
+                            && parkingLot.getAllSlots().get(index).getVehicle().vehicleColour
+                            .equals(Vehicle.VehicleColour.BLUE)
+                            && parkingLot.getAllSlots().get(index).getVehicle().vehicleCompany
+                    .equals(Vehicle.VehicleCompany.TOYOTA))
+                    .mapToObj(parkingLot.getAllSlots()::get).collect(Collectors.toList()));
+        if (givenColouredVehicles.size() == 0)
             throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.NO_SUCH_VEHICLE_PRESENT,
                     "NO BLUE TOYOTA CARS PARKED");
-        return slotsOfBlueToyotaCars;
+        return givenColouredVehicles;
     }
 }

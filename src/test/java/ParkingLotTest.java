@@ -11,6 +11,7 @@ import parkinglot.service.ParkingLotService;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.IntStream;
 
 public class ParkingLotTest {
@@ -332,9 +333,9 @@ public class ParkingLotTest {
                 Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.BLUE, Vehicle.VehicleCompany.TOYOTA,
                 "UP-"+ 4 +"-KK-1111");
         IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
-        Slot[] detailsOfBlueToyotaCars = parkingLotService.getDetailsOfBlueToyotaCarsParked();
-        Assert.assertEquals(Vehicle.VehicleCompany.TOYOTA, detailsOfBlueToyotaCars[0].getVehicle().vehicleCompany);
-        Assert.assertEquals(Vehicle.VehicleColour.BLUE, detailsOfBlueToyotaCars[0].getVehicle().vehicleColour);
+        List<Slot> detailsOfBlueToyotaCars = parkingLotService.getDetailsOfBlueToyotaCarsParked();
+        Assert.assertEquals(Vehicle.VehicleCompany.TOYOTA, detailsOfBlueToyotaCars.get(0).getVehicle().vehicleCompany);
+        Assert.assertEquals(Vehicle.VehicleColour.BLUE, detailsOfBlueToyotaCars.get(0).getVehicle().vehicleColour);
     }
 
     @Test
@@ -348,8 +349,8 @@ public class ParkingLotTest {
                 Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.BLUE, Vehicle.VehicleCompany.TOYOTA,
                 "UP-"+ 4 +"-KK-1111");
         IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
-        Slot[] detailsOfBlueToyotaCars = parkingLotService.getDetailsOfBlueToyotaCarsParked();
-        Assert.assertEquals("Driver Of Vehicle", detailsOfBlueToyotaCars[0].getAttendantName());
+        List<Slot> detailsOfBlueToyotaCars = parkingLotService.getDetailsOfBlueToyotaCarsParked();
+        Assert.assertEquals("Driver Of Vehicle", detailsOfBlueToyotaCars.get(0).getAttendantName());
     }
 
     @Test
