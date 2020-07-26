@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class ParkingLotAllotment {
     private final int parkingLotSize;
@@ -23,10 +24,9 @@ public class ParkingLotAllotment {
                 break;
             case NORMAL:
                 if (vehicle.driverCategory.equals(Vehicle.DriverCategory.HANDICAPPED))
-                    for (ParkingLot parkingLot : parkingLots) {
+                    for (ParkingLot parkingLot : parkingLots)
                         if (parkingLot.getNumberOfVehiclesParked() < this.parkingLotSize)
                             return parkingLot;
-                    }
                 List<ParkingLot> temporaryParkingLotsList = new ArrayList<>(parkingLots);
                 Collections.sort(temporaryParkingLotsList, Comparator.comparing(ParkingLot::getNumberOfVehiclesParked));
                 availableParkingLot = temporaryParkingLotsList.get(0);
