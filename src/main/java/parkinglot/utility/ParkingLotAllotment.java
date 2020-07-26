@@ -3,6 +3,8 @@ package parkinglot.utility;
 import parkinglot.model.Vehicle;
 import parkinglot.service.ParkingLot;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class ParkingLotAllotment {
@@ -24,14 +26,9 @@ public class ParkingLotAllotment {
                         if (parkingLot.getNumberOfVehiclesParked() < this.parkingLotSize)
                             return parkingLot;
                     }
-                int minimumIndex = 0;
-                int minimumSize = parkingLots.get(0).getNumberOfVehiclesParked();
-                for (int index = 0; index < parkingLots.size(); index++)
-                    if (parkingLots.get(index).getNumberOfVehiclesParked() < minimumSize) {
-                        minimumIndex = index;
-                        minimumSize = parkingLots.get(index).getNumberOfVehiclesParked();
-                    }
-                availableParkingLot = parkingLots.get(minimumIndex);
+                List<ParkingLot> temporaryParkingLotsList = new ArrayList<>(parkingLots);
+                temporaryParkingLotsList.sort(Comparator.comparing(ParkingLot::getNumberOfVehiclesParked));
+                availableParkingLot = temporaryParkingLotsList.get(0);
         }
         return availableParkingLot;
     }

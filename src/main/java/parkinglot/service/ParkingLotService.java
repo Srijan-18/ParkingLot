@@ -13,10 +13,10 @@ import java.util.stream.IntStream;
 public class ParkingLotService {
     private static final int INDEX_FACTOR = 1;
     private final int numberOfLots;
-    private List<ParkingLot> parkingLots;
+    private final List<ParkingLot> parkingLots;
     private final int parkingLotSize;
-    private List<IAuthority> observerList;
-    private ParkingLotAllotment parkingLotAllotment;
+    private final List<IAuthority> observerList;
+    private final ParkingLotAllotment parkingLotAllotment;
 
     public ParkingLotService(int singleParkingLotSize, int numberOfLots) {
         this.numberOfLots = numberOfLots;
