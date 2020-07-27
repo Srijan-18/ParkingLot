@@ -45,7 +45,7 @@ public class ParkingLotService {
         parkingLotToPark.getAllSlots().set(slotToPark, new Slot(vehicle, new ParkingUtility().getCurrentDateTime(),
                 parkingAttendant.getAttendant()));
         if (checkParkingLotStatus())
-            this.notifyObserversOfFullParkingLot();
+            observerList.forEach(IAuthority::fullCapacityReached);
     }
 
     public boolean isVehiclePresent(Vehicle vehicle) {
@@ -58,24 +58,11 @@ public class ParkingLotService {
         ParkingLot lotOfVehicle = parkingLotAllotment.getLotOfParkedVehicle(parkingLots, vehicle);
         lotOfVehicle.getAllSlots().stream().filter(slot -> slot != null && slot.getVehicle().equals(vehicle))
                 .forEach(slot -> lotOfVehicle.getAllSlots().set(lotOfVehicle.getAllSlots().indexOf(slot), null));
-        if (!checkParkingLotStatus())
-            this.notifyObserversOfAvailability();
+       observerList.forEach(IAuthority::spaceAvailableForParking);
     }
 
     public void addObserver(IAuthority authority) {
         this.observerList.add(authority);
-    }
-
-    private void notifyObserversOfAvailability() {
-        for (IAuthority observer : observerList) {
-            observer.spaceAvailableForParking();
-        }
-    }
-
-    private void notifyObserversOfFullParkingLot() {
-        for (IAuthority observer : observerList) {
-            observer.fullCapacityReached();
-        }
     }
 
     public boolean checkParkingLotStatus() {
