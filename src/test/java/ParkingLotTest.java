@@ -371,4 +371,41 @@ public class ParkingLotTest {
                     exception.exceptionType);
         }
     }
+
+    @Test
+    public void givenParkedVehicles_WhenQueriedAboutBMWVehicles_ShouldReturnTheirDetails() {
+        ParkingLotService parkingLotService = new ParkingLotService(2, 2);
+        String[] attendantNames = {"Attendant1", "Attendant2", "Attendant3", "Attendant4"};
+        IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.addParkingAttendant(attendantNames[index]));
+        Vehicle[] vehicles = new Vehicle[4];
+        IntStream.range(0, 3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
+                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
+                "UP-"+ (index + 1) +"-KK-1111" ));
+        vehicles[3] = new Vehicle(Vehicle.DriverCategory.NORMAL,
+                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.BLUE, Vehicle.VehicleCompany.BMW,
+                "UP-"+ 4 +"-KK-1111");
+        IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
+        List<Slot> detailsOfBMWVehiclesParked = parkingLotService.getDetailsOfBMWVehicles();
+        Assert.assertEquals(Vehicle.VehicleCompany.BMW, detailsOfBMWVehiclesParked.get(0).getVehicle().vehicleCompany);
+
+
+    }
+
+    @Test
+    public void givenParkedVehiclesAndQueriedAboutBMWVehiclesParked_WhenNotPresent_ShouldThrowAnException() {
+       try {
+           ParkingLotService parkingLotService = new ParkingLotService(2, 2);
+           String[] attendantNames = {"Attendant1", "Attendant2", "Attendant3", "Attendant4"};
+           IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.addParkingAttendant(attendantNames[index]));
+           Vehicle[] vehicles = new Vehicle[4];
+           IntStream.range(0, 4).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
+                   Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
+                   "UP-" + (index + 1) + "-KK-1111"));
+           IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
+           parkingLotService.getDetailsOfBMWVehicles();
+       } catch (ParkingLotServiceException exception) {
+           Assert.assertEquals(ParkingLotServiceException.ExceptionType.NO_SUCH_VEHICLE_PRESENT,
+                   exception.exceptionType);
+       }
+    }
 }
