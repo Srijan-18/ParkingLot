@@ -132,4 +132,8 @@ public class ParkingLotService {
         return getVehiclesAccordingToConditions.getDetailsOfVehicleAccordingToCompany
                 (parkingLots, Vehicle.VehicleCompany.BMW);
     }
+
+    public List<Slot> getDetailsOfVehiclesParkedInLast30Minutes() {
+        return getVehiclesAccordingToConditions.getVehiclesInGivenTimeRangeInMinutes(parkingLots, 30);
+    }
 }

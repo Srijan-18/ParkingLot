@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 public class ParkingUtility {
 
     public String getCurrentDateTime() {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         LocalDateTime localDateTime = LocalDateTime.now();
         return dateTimeFormatter.format(localDateTime);
     }

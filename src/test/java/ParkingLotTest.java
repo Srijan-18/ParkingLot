@@ -408,4 +408,33 @@ public class ParkingLotTest {
                    exception.exceptionType);
        }
     }
+
+    @Test
+    public void givenParkedVehicles_WhenQueriedAboutVehiclesParkedInLast30Minutes_ShouldReturnTheirDetails() {
+        ParkingLotService parkingLotService = new ParkingLotService(2, 2);
+        String[] attendantNames = {"Attendant1", "Attendant2", "Attendant3", "Attendant4"};
+        IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.addParkingAttendant(attendantNames[index]));
+        Vehicle[] vehicles = new Vehicle[4];
+        IntStream.range(0, 3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
+                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
+                "UP-"+ (index + 1) +"-KK-1111" ));
+        vehicles[3] = new Vehicle(Vehicle.DriverCategory.NORMAL,
+                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.BLUE, Vehicle.VehicleCompany.BMW,
+                "UP-"+ 4 +"-KK-1111");
+        IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
+        List<Slot> detailsOfVehiclesParkedInLast30Minutes = parkingLotService
+                .getDetailsOfVehiclesParkedInLast30Minutes();
+        Assert.assertEquals(4, detailsOfVehiclesParkedInLast30Minutes.size());
+    }
+
+    @Test
+    public void givenZeroParkedVehicles_WhenQueriedAboutVehiclesParkedInLast30Minutes_ShouldThrowAnException() {
+        ParkingLotService parkingLotService = new ParkingLotService(2, 2);
+        try {
+                parkingLotService.getDetailsOfVehiclesParkedInLast30Minutes();
+        } catch (ParkingLotServiceException exception) {
+            Assert.assertEquals(ParkingLotServiceException.ExceptionType.NO_SUCH_VEHICLE_PRESENT,
+                    exception.exceptionType);
+        }
+    }
 }
