@@ -8,8 +8,8 @@ public class Vehicle {
         HANDICAPPED, NORMAL
     }
 
-    public enum VehicleCategory {
-        LARGE, NORMAL;
+    public enum VehicleSize {
+        LARGE, SMALL;
     }
 
     public enum VehicleColour {
@@ -21,15 +21,15 @@ public class Vehicle {
     }
 
     public DriverCategory driverCategory;
-    public VehicleCategory vehicleCategory;
+    public VehicleSize vehicleSize;
     public VehicleColour vehicleColour;
     public VehicleCompany vehicleCompany;
     public String plateNumber;
 
-    public Vehicle(DriverCategory driverCategory, VehicleCategory vehicleCategory, VehicleColour vehicleColour,
+    public Vehicle(DriverCategory driverCategory, VehicleSize vehicleSize, VehicleColour vehicleColour,
                    VehicleCompany vehicleCompany, String plateNumber) {
         this.driverCategory = driverCategory;
-        this.vehicleCategory = vehicleCategory;
+        this.vehicleSize = vehicleSize;
         this.vehicleColour = vehicleColour;
         this.vehicleCompany = vehicleCompany;
         this.plateNumber = plateNumber;

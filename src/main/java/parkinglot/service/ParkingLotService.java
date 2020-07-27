@@ -84,7 +84,7 @@ public class ParkingLotService {
     }
 
     private int getParkingSlotToPark(ParkingLot parkingLot, Vehicle vehicle) {
-        if (vehicle.vehicleCategory.equals(Vehicle.VehicleCategory.LARGE))
+        if (vehicle.vehicleSize.equals(Vehicle.VehicleSize.LARGE))
             return parkingLot.getIndexOfSlotWithConsecutiveEmptySlot();
         return IntStream.range(0, parkingLot.getAllSlots().size())
                 .filter(index -> parkingLot.getAllSlots().get(index) == null)

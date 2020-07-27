@@ -30,7 +30,7 @@ public class ParkingLotTest {
 
     @Test
     public void givenAVehicle_WhenParked_ShouldReturnTrue() {
-        Vehicle vehicle = new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleCategory.NORMAL,
+        Vehicle vehicle = new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleSize.SMALL,
                 Vehicle.VehicleColour.NOT_SPECIFIED, Vehicle.VehicleCompany.NOT_SPECIFIED,"UP-01-KK-1111");
         parkingLotService.parkTheVehicle(vehicle);
         boolean status = parkingLotService.isVehiclePresent(vehicle);
@@ -39,7 +39,7 @@ public class ParkingLotTest {
 
     @Test
     public void givenAVehicleParked_WhenUnParked_ShouldReturnFalse() {
-        Vehicle vehicle = new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleCategory.NORMAL,
+        Vehicle vehicle = new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleSize.SMALL,
                 Vehicle.VehicleColour.NOT_SPECIFIED, Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-01-KK-1111");
         parkingLotService.parkTheVehicle(vehicle);
         parkingLotService.unParkTheVehicle(vehicle);
@@ -51,7 +51,7 @@ public class ParkingLotTest {
     public void givenParkingLotWithItsSize_WhenFullyOccupiedAndQueriedByOwner_ShouldReturnTrue() {
         Vehicle[] vehicles = new Vehicle[3];
         IntStream.range(0, 3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.NOT_SPECIFIED,
                 Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-"+ (index + 1) +"-KK-1111"));
         Arrays.stream(vehicles).forEachOrdered(vehicle -> parkingLotService.parkTheVehicle(vehicle));
         boolean status = owner.getParkingLotStatus();
@@ -63,7 +63,7 @@ public class ParkingLotTest {
         try {
             Vehicle[] vehicles = new Vehicle[4];
             IntStream.range(0, 4).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                    Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED,
+                    Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.NOT_SPECIFIED,
                     Vehicle.VehicleCompany.NOT_SPECIFIED,"UP-"+ (index + 1) +"-KK-1111"));
             Arrays.stream(vehicles).forEachOrdered(vehicle -> parkingLotService.parkTheVehicle(vehicle));
         } catch (ParkingLotServiceException exception) {
@@ -75,7 +75,7 @@ public class ParkingLotTest {
     public void givenVehicleToUnPark_WhenNotPresent_ShouldThrowAnException() {
         try {
             parkingLotService.unParkTheVehicle(new Vehicle(Vehicle.DriverCategory.NORMAL,
-                    Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED,
+                    Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.NOT_SPECIFIED,
                     Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-01-KK-1111"));
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT, exception.exceptionType);
@@ -86,7 +86,7 @@ public class ParkingLotTest {
     public void givenParkingLot_WhenFullAndQueriedForFullParkingLotByAirportSecurity_ShouldReturnTrue() {
         Vehicle[] vehicles = new Vehicle[3];
         IntStream.range(0, 3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.NOT_SPECIFIED,
                 Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-"+ (index + 1) +"-KK-1111"));
         Arrays.stream(vehicles).forEachOrdered(vehicle -> parkingLotService.parkTheVehicle(vehicle));
         boolean status = airportSecurity.getParkingLotStatus();
@@ -97,7 +97,7 @@ public class ParkingLotTest {
     public void givenParkingLot_WhenParkingLotNotFullAndCheckedByOwner_ShouldReturnFalse() {
         Vehicle[] vehicles = new Vehicle[2];
         IntStream.range(0, 2).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.NOT_SPECIFIED,
                 Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-"+ (index + 1) +"-KK-1111"));
         Arrays.stream(vehicles).forEachOrdered(vehicle -> parkingLotService.parkTheVehicle(vehicle));
         boolean status = owner.getParkingLotStatus();
@@ -108,7 +108,7 @@ public class ParkingLotTest {
     public void givenAParkedVehicle_WhenQueriedForSlotNumber_ShouldReturnSlotNumber() {
         Vehicle[] vehicles = new Vehicle[3];
         IntStream.range(0, 3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.NOT_SPECIFIED,
                 Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-"+ (index + 1) +"-KK-1111"));
         Arrays.stream(vehicles).forEachOrdered(vehicle -> parkingLotService.parkTheVehicle(vehicle));
         Assert.assertEquals("Parking Lot:1 Slot:2", parkingLotService.getSlotOfParkedVehicle(vehicles[1]));
@@ -118,7 +118,7 @@ public class ParkingLotTest {
     public void givenAVehicleNotPresentInParkingLot_WhenQueriedForSlotNumber_ShouldThrowAnException() {
         try {
             parkingLotService.getSlotOfParkedVehicle(new Vehicle(Vehicle.DriverCategory.NORMAL,
-                    Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED,
+                    Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.NOT_SPECIFIED,
                     Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-01-KK-1111"));
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT, exception.exceptionType);
@@ -128,7 +128,7 @@ public class ParkingLotTest {
     @Test
     public void givenAVehicle_WhenAlreadyParked_ShouldThrowAnException() {
         try {
-            Vehicle vehicle = new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleCategory.NORMAL,
+            Vehicle vehicle = new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleSize.SMALL,
                     Vehicle.VehicleColour.NOT_SPECIFIED, Vehicle.VehicleCompany.NOT_SPECIFIED,
                     "UP-01-KK-1111");
             parkingLotService.parkTheVehicle(vehicle);
@@ -141,7 +141,7 @@ public class ParkingLotTest {
 
     @Test
     public void givenVehicleToPark_WhenParkedAndQueriedForTimeOfParking_ShouldReturnCurrentTime() {
-        Vehicle vehicle = new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleCategory.NORMAL,
+        Vehicle vehicle = new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleSize.SMALL,
                 Vehicle.VehicleColour.NOT_SPECIFIED, Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-01-KK-1111");
         parkingLotService.parkTheVehicle(vehicle);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm");
@@ -153,7 +153,7 @@ public class ParkingLotTest {
     public void givenVehicleNotPresentInParkingLot_WhenQueriedForTime_ShouldThrowAnException() {
         try {
             parkingLotService.getTimeOfParkingForVehicle(new Vehicle(Vehicle.DriverCategory.NORMAL,
-                    Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED,
+                    Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.NOT_SPECIFIED,
                     Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-01-KK-1111"));
         } catch (ParkingLotServiceException exception) {
             Assert.assertEquals(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT, exception.exceptionType);
@@ -165,7 +165,7 @@ public class ParkingLotTest {
         ParkingLotService lotService = new ParkingLotService(3, 3);
         Vehicle[] vehicles = new Vehicle[4];
         IntStream.range(0, 4).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.NOT_SPECIFIED,
                 Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-"+ (index + 1) +"-KK-1111"));
         Arrays.stream(vehicles).forEachOrdered(lotService::parkTheVehicle);
         Assert.assertEquals("Parking Lot:1 Slot:2", lotService.getSlotOfParkedVehicle(vehicles[3]));
@@ -177,7 +177,7 @@ public class ParkingLotTest {
             ParkingLotService parkingLotService = new ParkingLotService(3, 3);
             Vehicle[] vehicles = new Vehicle[4];
             IntStream.range(0, 4).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                    Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED,
+                    Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.NOT_SPECIFIED,
                     Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-"+ (index + 1) +"-KK-1111"));
             Arrays.stream(vehicles).forEachOrdered(parkingLotService::parkTheVehicle);
             parkingLotService.parkTheVehicle(vehicles[1]);
@@ -193,7 +193,7 @@ public class ParkingLotTest {
             ParkingLotService parkingLotService = new ParkingLotService(2, 2);
             Vehicle[] vehicles = new Vehicle[5];
             IntStream.range(0, 5).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                    Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED,
+                    Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.NOT_SPECIFIED,
                     Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-"+ (index + 1) +"-KK-1111"));
             Arrays.stream(vehicles).forEachOrdered(parkingLotService::parkTheVehicle);
         } catch (ParkingLotServiceException exception) {
@@ -204,16 +204,16 @@ public class ParkingLotTest {
     @Test
     public void givenHandicappedDriver_WhenToPark_ShouldBeGivenNearestSlot() {
         ParkingLotService parkingLotService = new ParkingLotService(3, 3);
-        Vehicle[] vehicles = {new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleCategory.NORMAL,
+        Vehicle[] vehicles = {new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleSize.SMALL,
                 Vehicle.VehicleColour.NOT_SPECIFIED, Vehicle.VehicleCompany.NOT_SPECIFIED,
                 "UP-01-KK-1111"),
-                new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleCategory.NORMAL,
+                new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleSize.SMALL,
                         Vehicle.VehicleColour.NOT_SPECIFIED, Vehicle.VehicleCompany.NOT_SPECIFIED,
                         "UP-02-KK-1111"),
-                new Vehicle(Vehicle.DriverCategory.HANDICAPPED, Vehicle.VehicleCategory.NORMAL,
+                new Vehicle(Vehicle.DriverCategory.HANDICAPPED, Vehicle.VehicleSize.SMALL,
                         Vehicle.VehicleColour.NOT_SPECIFIED, Vehicle.VehicleCompany.NOT_SPECIFIED,
                         "UP-03-KK-1111"),
-                new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleCategory.NORMAL,
+                new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleSize.SMALL,
                         Vehicle.VehicleColour.NOT_SPECIFIED, Vehicle.VehicleCompany.NOT_SPECIFIED,
                         "UP-04-KK-1111")};
         Arrays.stream(vehicles).forEachOrdered(parkingLotService::parkTheVehicle);
@@ -225,9 +225,9 @@ public class ParkingLotTest {
         ParkingLotService parkingLotService = new ParkingLotService(2, 3);
         Vehicle[] vehicles = new Vehicle[5];
         IntStream.range(0, 4).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.HANDICAPPED,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.NOT_SPECIFIED,
                 Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-"+ (index + 1) +"-KK-1111"));
-        vehicles[4] = new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleCategory.NORMAL,
+        vehicles[4] = new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleSize.SMALL,
                 Vehicle.VehicleColour.NOT_SPECIFIED, Vehicle.VehicleCompany.NOT_SPECIFIED,
                 "UP-"+ 5 +"-KK-1111");
         Arrays.stream(vehicles).forEachOrdered(parkingLotService::parkTheVehicle);
@@ -239,7 +239,7 @@ public class ParkingLotTest {
         ParkingLotService parkingLotService = new ParkingLotService(2, 2);
         Vehicle[] vehicles = new Vehicle[3];
         IntStream.range(0, 3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.LARGE, Vehicle.VehicleColour.NOT_SPECIFIED,
+                Vehicle.VehicleSize.LARGE, Vehicle.VehicleColour.NOT_SPECIFIED,
                 Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-"+ (index + 1) +"-KK-1111"));
         try {
             IntStream.range(0, 3).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
@@ -254,14 +254,14 @@ public class ParkingLotTest {
         ParkingLotService parkingLotService = new ParkingLotService(4, 3);
         Vehicle[] vehicles = new Vehicle[12];
         IntStream.range(0, 12).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.NOT_SPECIFIED,
                 Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-"+ (index + 1) +"-KK-1111"));
         IntStream.range(0, 12).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
         IntStream.rangeClosed(3, 5).forEachOrdered(index -> parkingLotService.unParkTheVehicle(vehicles[index]));
         IntStream.rangeClosed(7, 9).forEachOrdered(index -> parkingLotService.unParkTheVehicle(vehicles[index]));
         parkingLotService.unParkTheVehicle(vehicles[11]);
         Vehicle largeVehicleWithHandicappedDriver = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.LARGE, Vehicle.VehicleColour.NOT_SPECIFIED,
+                Vehicle.VehicleSize.LARGE, Vehicle.VehicleColour.NOT_SPECIFIED,
                 Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-23-KK-1111");
         parkingLotService.parkTheVehicle(largeVehicleWithHandicappedDriver);
         Assert.assertEquals("Parking Lot:3 Slot:2", parkingLotService
@@ -273,14 +273,14 @@ public class ParkingLotTest {
         ParkingLotService parkingLotService = new ParkingLotService(4, 3);
         Vehicle[] vehicles = new Vehicle[12];
         IntStream.range(0, 12).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.NOT_SPECIFIED,
                 Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-"+ (index + 1) +"-KK-1111"));
         IntStream.range(0, 12).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
         IntStream.rangeClosed(3, 5).forEachOrdered(index -> parkingLotService.unParkTheVehicle(vehicles[index]));
         IntStream.rangeClosed(7, 9).forEachOrdered(index -> parkingLotService.unParkTheVehicle(vehicles[index]));
         parkingLotService.unParkTheVehicle(vehicles[11]);
         Vehicle largeVehicleWithHandicappedDriver = new Vehicle(Vehicle.DriverCategory.HANDICAPPED,
-                Vehicle.VehicleCategory.LARGE, Vehicle.VehicleColour.NOT_SPECIFIED,
+                Vehicle.VehicleSize.LARGE, Vehicle.VehicleColour.NOT_SPECIFIED,
                 Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-23-KK-1111");
         parkingLotService.parkTheVehicle(largeVehicleWithHandicappedDriver);
         Assert.assertEquals("Parking Lot:2 Slot:2", parkingLotService
@@ -291,13 +291,13 @@ public class ParkingLotTest {
     public void givenParkedVehicles_WhenQueriedForLocationOfWhiteVehicles_ShouldReturnTheirLocations() {
         ParkingLotService parkingLotService = new ParkingLotService(3, 2);
         Vehicle[] vehicles = new Vehicle[4];
-        vehicles[0] = new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleCategory.NORMAL,
+        vehicles[0] = new Vehicle(Vehicle.DriverCategory.NORMAL, Vehicle.VehicleSize.SMALL,
                 Vehicle.VehicleColour.NOT_SPECIFIED, Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-01-KK-1111");
         IntStream.range(1, 3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
                 "UP-"+ (index + 1) +"-KK-1111" ));
         vehicles[3] = new Vehicle(Vehicle.DriverCategory.HANDICAPPED,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
                 "UP-51-KK-1111");
         IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
         String[] locationsOfWhiteVehicles = parkingLotService.getLocationOfVehiclesOfParticularColour
@@ -310,7 +310,7 @@ public class ParkingLotTest {
         ParkingLotService parkingLotService = new ParkingLotService(3, 2);
         Vehicle[] vehicles = new Vehicle[6];
         IntStream.range(0, 6).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.NOT_SPECIFIED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.NOT_SPECIFIED,
                 Vehicle.VehicleCompany.NOT_SPECIFIED, "UP-"+ (index + 1) +"-KK-1111"));
         IntStream.range(0, 6).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
         try {
@@ -328,10 +328,10 @@ public class ParkingLotTest {
         IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.addParkingAttendant(attendantNames[index]));
         Vehicle[] vehicles = new Vehicle[4];
         IntStream.range(0, 3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
                 "UP-"+ (index + 1) +"-KK-1111" ));
         vehicles[3] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.BLUE, Vehicle.VehicleCompany.TOYOTA,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.BLUE, Vehicle.VehicleCompany.TOYOTA,
                 "UP-"+ 4 +"-KK-1111");
         IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
         List<Slot> detailsOfBlueToyotaVehicles = parkingLotService.getDetailsOfBlueToyotaVehiclesParked();
@@ -344,10 +344,10 @@ public class ParkingLotTest {
         ParkingLotService parkingLotService = new ParkingLotService(2, 2);
         Vehicle[] vehicles = new Vehicle[4];
         IntStream.range(0, 3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
                 "UP-"+ (index + 1) +"-KK-1111" ));
         vehicles[3] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.BLUE, Vehicle.VehicleCompany.TOYOTA,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.BLUE, Vehicle.VehicleCompany.TOYOTA,
                 "UP-"+ 4 +"-KK-1111");
         IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
         List<Slot> detailsOfBlueToyotaVehicles = parkingLotService.getDetailsOfBlueToyotaVehiclesParked();
@@ -362,7 +362,7 @@ public class ParkingLotTest {
             IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.addParkingAttendant(attendantNames[index]));
             Vehicle[] vehicles = new Vehicle[4];
             IntStream.range(0, 4).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                    Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
+                    Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
                     "UP-" + (index + 1) + "-KK-1111"));
             IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
             parkingLotService.getDetailsOfBlueToyotaVehiclesParked();
@@ -379,10 +379,10 @@ public class ParkingLotTest {
         IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.addParkingAttendant(attendantNames[index]));
         Vehicle[] vehicles = new Vehicle[4];
         IntStream.range(0, 3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
                 "UP-"+ (index + 1) +"-KK-1111" ));
         vehicles[3] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.BLUE, Vehicle.VehicleCompany.BMW,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.BLUE, Vehicle.VehicleCompany.BMW,
                 "UP-"+ 4 +"-KK-1111");
         IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
         List<Slot> detailsOfBMWVehiclesParked = parkingLotService.getDetailsOfBMWVehicles();
@@ -399,7 +399,7 @@ public class ParkingLotTest {
            IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.addParkingAttendant(attendantNames[index]));
            Vehicle[] vehicles = new Vehicle[4];
            IntStream.range(0, 4).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                   Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
+                   Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
                    "UP-" + (index + 1) + "-KK-1111"));
            IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
            parkingLotService.getDetailsOfBMWVehicles();
@@ -416,10 +416,10 @@ public class ParkingLotTest {
         IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.addParkingAttendant(attendantNames[index]));
         Vehicle[] vehicles = new Vehicle[4];
         IntStream.range(0, 3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
                 "UP-"+ (index + 1) +"-KK-1111" ));
         vehicles[3] = new Vehicle(Vehicle.DriverCategory.NORMAL,
-                Vehicle.VehicleCategory.NORMAL, Vehicle.VehicleColour.BLUE, Vehicle.VehicleCompany.BMW,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.BLUE, Vehicle.VehicleCompany.BMW,
                 "UP-"+ 4 +"-KK-1111");
         IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
         List<Slot> detailsOfVehiclesParkedInLast30Minutes = parkingLotService

@@ -30,11 +30,11 @@ public class ParkingLotAllotment {
 
     public ParkingLot getTheLotToPark(List<ParkingLot> parkingLots, Vehicle vehicle) {
         ParkingLot availableParkingLot = null;
-        switch (vehicle.vehicleCategory) {
+        switch (vehicle.vehicleSize) {
             case LARGE:
                 availableParkingLot = getLotForLargeVehicle(vehicle, parkingLots);
                 break;
-            case NORMAL:
+            case SMALL:
                 if (vehicle.driverCategory.equals(Vehicle.DriverCategory.HANDICAPPED))
                     for (ParkingLot parkingLot : parkingLots) {
                         if (parkingLot.getNumberOfVehiclesParked() < this.parkingLotSize)
