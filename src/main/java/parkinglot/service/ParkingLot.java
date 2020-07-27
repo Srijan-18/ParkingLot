@@ -28,11 +28,8 @@ public class ParkingLot {
     }
 
     public String getTimeOfParking(Vehicle vehicle) {
-        for (Slot slot : allSlots) {
-            if (slot != null && slot.getVehicle().equals(vehicle))
-                return slot.getVehicleParkingDateTime();
-        }
-        return null;
+        return allSlots.stream().filter(slot -> slot != null && slot.getVehicle().equals(vehicle))
+                .findFirst().map(Slot::getVehicleParkingDateTime).orElse(null);
     }
 
     public int getSlotOfVehicleParked(Vehicle vehicle) {

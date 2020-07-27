@@ -1,5 +1,6 @@
 package parkinglot.utility;
 
+import parkinglot.exception.ParkingLotServiceException;
 import parkinglot.model.Vehicle;
 import parkinglot.service.ParkingLot;
 
@@ -14,6 +15,17 @@ public class ParkingLotAllotment {
 
     public ParkingLotAllotment(int parkingLotSize) {
         this.parkingLotSize = parkingLotSize;
+    }
+
+    public ParkingLot getLotOfParkedVehicle(List<ParkingLot> parkingLots, Vehicle vehicle) {
+        for (ParkingLot parkingLot : parkingLots)
+            if((IntStream.range(0, parkingLot.getAllSlots().size())
+                    .filter(index -> parkingLot.getAllSlots().get(index) != null
+                            && parkingLot.getAllSlots().get(index).getVehicle().equals(vehicle))
+                    .findAny()).isPresent())
+                return parkingLot;
+        throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.VEHICLE_NOT_PRESENT,
+                "VEHICLE NOT PRESENT");
     }
 
     public ParkingLot getTheLotToPark(List<ParkingLot> parkingLots, Vehicle vehicle) {
@@ -50,6 +62,9 @@ public class ParkingLotAllotment {
             temporaryList.sort(Comparator.comparing(ParkingLot::getNumberOfVehiclesParked));
             availableParkingLot = temporaryList.get(0);
         }
+        if (availableParkingLot == null)
+            throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.NO_SPACE_FOR_LARGE_VEHICLE,
+                    "NO MORE SPACE TO PARK.");
         return availableParkingLot;
     }
 }

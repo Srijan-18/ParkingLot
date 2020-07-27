@@ -17,7 +17,7 @@ public class Vehicle {
     }
 
     public enum VehicleCompany {
-        TOYOTA, NOT_SPECIFIED
+        TOYOTA, BMW, NOT_SPECIFIED
     }
 
     public DriverCategory driverCategory;
