@@ -471,4 +471,28 @@ public class ParkingLotTest {
                     exception.exceptionType);
         }
     }
+
+    @Test
+    public void givenParkedVehicles_WhenQueriedForAllParkedVehicles_ShouldReturnTheirDetails() {
+        ParkingLotService parkingLotService = new ParkingLotService(5, 3);
+        String[] attendantNames = {"Attendant1", "Attendant2", "Attendant3", "Attendant4"};
+        IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.addParkingAttendant(attendantNames[index]));
+        Vehicle[] vehicles = new Vehicle[8];
+        IntStream.range(0, 8).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.HANDICAPPED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
+                "UP-"+ (index + 1) +"-KK-1111" ));
+        IntStream.range(0, 8).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
+        List<Vehicle> parkedVehicles = parkingLotService.getAllParkedVehicles();
+        Assert.assertEquals(8, parkedVehicles.size());
+    }
+
+    @Test
+    public void givenEmptyParkingLot_WhenQueriedForAllParkedVehicles_ShouldReturnThrowException() {
+        ParkingLotService parkingLotService = new ParkingLotService(5, 3);
+        try {
+            parkingLotService.getAllParkedVehicles();
+        } catch (ParkingLotServiceException exception) {
+            Assert.assertEquals(ParkingLotServiceException.ExceptionType.EMPTY_PARKING_LOT, exception.exceptionType);
+        }
+    }
 }

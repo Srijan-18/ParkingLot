@@ -48,13 +48,13 @@ public class GetVehiclesAccordingToConditions {
     public List<Slot> getVehiclesInGivenTimeRangeInMinutes(List<ParkingLot> parkingLots, int searchTimeRange) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         LocalDateTime currentDateTime = LocalDateTime.parse(new ParkingUtility().getCurrentDateTime(),
-                                                            dateTimeFormatter);
+                dateTimeFormatter);
         List<Slot> vehiclesParkedInGivenTimeRange = new ArrayList<>();
         for (ParkingLot parkingLot : parkingLots)
             vehiclesParkedInGivenTimeRange.addAll(IntStream.range(0, parkingLot.getAllSlots().size())
                     .filter(index -> parkingLot.getAllSlots().get(index) != null
                             && ChronoUnit.MINUTES.between(currentDateTime,
-                                    LocalDateTime.parse(parkingLot.getAllSlots().get(index).getVehicleParkingDateTime(),
+                            LocalDateTime.parse(parkingLot.getAllSlots().get(index).getVehicleParkingDateTime(),
                                     dateTimeFormatter)) <= searchTimeRange)
                     .mapToObj(parkingLot.getAllSlots()::get).collect(Collectors.toList()));
         if (vehiclesParkedInGivenTimeRange.size() == 0)
@@ -68,10 +68,10 @@ public class GetVehiclesAccordingToConditions {
                                                                               Vehicle.VehicleSize searchVehicleSize,
                                                                               int[] lots) {
         List<ParkingLot> lotsToSearch = new ArrayList<>();
-        IntStream.range(0,lots.length).forEachOrdered(index -> lotsToSearch.add(index,
-                                                                                parkingLots.get(lots[index] - 1)));
+        IntStream.range(0, lots.length).forEachOrdered(index -> lotsToSearch.add(index,
+                parkingLots.get(lots[index] - 1)));
         List<Slot> detailsOfVehicles = new ArrayList<>();
-        for (ParkingLot parkingLot: lotsToSearch)
+        for (ParkingLot parkingLot : lotsToSearch)
             detailsOfVehicles.addAll(IntStream.range(0, parkingLot.getAllSlots().size())
                     .filter(index -> parkingLot.getAllSlots().get(index) != null
                             && parkingLot.getAllSlots().get(index).getVehicle().vehicleSize
@@ -83,5 +83,20 @@ public class GetVehiclesAccordingToConditions {
             throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.NO_SUCH_VEHICLE_PRESENT,
                     "NO SUCH VEHICLE PRESENT");
         return detailsOfVehicles;
+    }
+
+    public List<Vehicle> getAllVehiclesParked(List<ParkingLot> parkingLots) {
+        List<Slot> allOccupiedSlots = new ArrayList<>();
+        for (ParkingLot parkingLot : parkingLots)
+            allOccupiedSlots.addAll(IntStream.range(0, parkingLot.getAllSlots().size())
+                    .filter(index -> parkingLot.getAllSlots().get(index) != null)
+                    .mapToObj(parkingLot.getAllSlots()::get).collect(Collectors.toList()));
+        if (allOccupiedSlots.size() == 0)
+            throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.EMPTY_PARKING_LOT,
+                    "NO VEHICLES IN PARKING LOT");
+        List<Vehicle> allVehiclesPresent = new ArrayList<>();
+        IntStream.range(0, allOccupiedSlots.size())
+                .forEachOrdered(index -> allVehiclesPresent.add(allOccupiedSlots.get(index).getVehicle()));
+        return allVehiclesPresent;
     }
 }

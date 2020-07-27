@@ -142,4 +142,8 @@ public class ParkingLotService {
                 .getVehiclesWithGivenSizeAndDriverCategoryAndInGivenLots(parkingLots, Vehicle.DriverCategory.HANDICAPPED,
                                                                          Vehicle.VehicleSize.SMALL, new int[]{2, 4});
     }
+
+    public List<Vehicle> getAllParkedVehicles() {
+        return getVehiclesAccordingToConditions.getAllVehiclesParked(parkingLots);
+    }
 }
