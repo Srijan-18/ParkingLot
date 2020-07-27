@@ -136,4 +136,10 @@ public class ParkingLotService {
     public List<Slot> getDetailsOfVehiclesParkedInLast30Minutes() {
         return getVehiclesAccordingToConditions.getVehiclesInGivenTimeRangeInMinutes(parkingLots, 30);
     }
+
+    public List<Slot> getDetailsOfSmallVehiclesWithHandicappedDriversInLot2and4() {
+        return getVehiclesAccordingToConditions
+                .getVehiclesWithGivenSizeAndDriverCategoryAndInGivenLots(parkingLots, Vehicle.DriverCategory.HANDICAPPED,
+                                                                         Vehicle.VehicleSize.SMALL, new int[]{2, 4});
+    }
 }

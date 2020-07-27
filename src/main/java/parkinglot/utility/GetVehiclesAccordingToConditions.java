@@ -62,4 +62,26 @@ public class GetVehiclesAccordingToConditions {
                     "NO VEHICLE PARKED IN GIVEN TIME RANGE");
         return vehiclesParkedInGivenTimeRange;
     }
+
+    public List<Slot> getVehiclesWithGivenSizeAndDriverCategoryAndInGivenLots(List<ParkingLot> parkingLots,
+                                                                              Vehicle.DriverCategory searchDriverCategory,
+                                                                              Vehicle.VehicleSize searchVehicleSize,
+                                                                              int[] lots) {
+        List<ParkingLot> lotsToSearch = new ArrayList<>();
+        IntStream.range(0,lots.length).forEachOrdered(index -> lotsToSearch.add(index,
+                                                                                parkingLots.get(lots[index] - 1)));
+        List<Slot> detailsOfVehicles = new ArrayList<>();
+        for (ParkingLot parkingLot: lotsToSearch)
+            detailsOfVehicles.addAll(IntStream.range(0, parkingLot.getAllSlots().size())
+                    .filter(index -> parkingLot.getAllSlots().get(index) != null
+                            && parkingLot.getAllSlots().get(index).getVehicle().vehicleSize
+                            .equals(searchVehicleSize)
+                            && parkingLot.getAllSlots().get(index).getVehicle().driverCategory
+                            .equals(searchDriverCategory))
+                    .mapToObj(parkingLot.getAllSlots()::get).collect(Collectors.toList()));
+        if (detailsOfVehicles.size() == 0)
+            throw new ParkingLotServiceException(ParkingLotServiceException.ExceptionType.NO_SUCH_VEHICLE_PRESENT,
+                    "NO SUCH VEHICLE PRESENT");
+        return detailsOfVehicles;
+    }
 }

@@ -437,4 +437,38 @@ public class ParkingLotTest {
                     exception.exceptionType);
         }
     }
+
+    @Test
+    public void givenParkedVehicles_WhenQueriedForSmallVehiclesWithHandicappedDriversInLots2And4_ShouldReturnTheirDetails() {
+        ParkingLotService parkingLotService = new ParkingLotService(2, 4);
+        String[] attendantNames = {"Attendant1", "Attendant2", "Attendant3", "Attendant4"};
+        IntStream.range(0, 4).forEachOrdered(index -> parkingLotService.addParkingAttendant(attendantNames[index]));
+        Vehicle[] vehicles = new Vehicle[8];
+        IntStream.range(0, 3).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.HANDICAPPED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
+                "UP-"+ (index + 1) +"-KK-1111" ));
+        IntStream.range(3, 7).forEachOrdered(index -> vehicles[index] = new Vehicle(Vehicle.DriverCategory.NORMAL,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.WHITE, Vehicle.VehicleCompany.NOT_SPECIFIED,
+                "UP-"+ (index + 1) +"-KK-1111" ));
+        vehicles[7] = new Vehicle(Vehicle.DriverCategory.HANDICAPPED,
+                Vehicle.VehicleSize.SMALL, Vehicle.VehicleColour.BLUE, Vehicle.VehicleCompany.BMW,
+                "UP-"+ 8 +"-KK-1111");
+        IntStream.range(0, 8).forEachOrdered(index -> parkingLotService.parkTheVehicle(vehicles[index]));
+        List<Slot> detailsOfSmallVehiclesWithGivenConditions = parkingLotService
+                .getDetailsOfSmallVehiclesWithHandicappedDriversInLot2and4();
+        Assert.assertEquals(vehicles[2], detailsOfSmallVehiclesWithGivenConditions.get(0).getVehicle());
+        Assert.assertEquals(2, detailsOfSmallVehiclesWithGivenConditions.size());
+
+    }
+
+    @Test
+    public void givenEmptyParkingLot_WhenQueriedForSmallVehiclesWithHandicappedDriversInLots2And4_ShouldThrowException() {
+        ParkingLotService parkingLotService = new ParkingLotService(2, 4);
+        try {
+            parkingLotService.getDetailsOfSmallVehiclesWithHandicappedDriversInLot2and4();
+        } catch (ParkingLotServiceException exception) {
+            Assert.assertEquals(ParkingLotServiceException.ExceptionType.NO_SUCH_VEHICLE_PRESENT,
+                    exception.exceptionType);
+        }
+    }
 }
