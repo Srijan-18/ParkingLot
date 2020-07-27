@@ -88,7 +88,7 @@ public class ParkingLotTest {
     public void givenAParkedVehicle_WhenQueriedForSlotNumber_ShouldReturnSlotNumber() {
         Object[] vehicles = {new Object(), new Object(), new Object()};
         Arrays.stream(vehicles).forEachOrdered(vehicle -> parkingLotService.parkTheVehicle(vehicle));
-        Assert.assertEquals(12, parkingLotService.getSlotOfParkedVehicle(vehicles[1]));
+        Assert.assertEquals("P:1 S:2", parkingLotService.getSlotOfParkedVehicle(vehicles[1]));
     }
 
     @Test
